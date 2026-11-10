@@ -1,0 +1,31 @@
+# ── Secrets & environment ─────────────────────────────────────────────────────
+.env
+*.env
+!*.env.example
+
+# ── Go ────────────────────────────────────────────────────────────────────────
+backend/vendor/
+backend/*.exe
+backend/*.out
+backend/bin/
+backend/docs/
+
+# ── Node / Vue ────────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+
+# ── Uploaded / generated assets (seeded from code, not versioned) ─────────────
+backend/assets/files/
+
+# ── Docker volumes ────────────────────────────────────────────────────────────
+data/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db

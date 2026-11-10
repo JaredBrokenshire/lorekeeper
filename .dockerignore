@@ -1,0 +1,32 @@
+# Version control
+.git
+.gitignore
+
+# Local secrets (injected via env at runtime, never baked into image)
+.env
+*.env
+
+# Dev assets — seeded at runtime, not needed in image
+backend/assets/files
+
+# Go build artifacts
+backend/vendor/
+backend/bin/
+backend/docs/
+backend/*.exe
+backend/*.out
+
+# Node / Vue
+frontend/node_modules/
+frontend/dist/
+
+# IDE & OS noise
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docker config (no need to copy into the image itself)
+docker-compose*.yml
