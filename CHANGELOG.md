@@ -8,6 +8,7 @@
 - Added characters table migration with new model
 - Added character_classes and character_subclasses link table migrations
 - Added character list endpoint with new service and repo
+- Added generic paginate method to db
 
 ## V0.0.1 - Project Initialisation
 

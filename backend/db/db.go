@@ -60,3 +60,17 @@ func runMigrations(db *sqlx.DB, driver string, migrations []store.Migratable) {
 		log.Println("Migrated", migration.GetName())
 	}
 }
+
+func Paginate(page, pageSize int) (int, func(db *gorm.DB) *gorm.DB) {
+	switch {
+	case pageSize > 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 25
+	}
+
+	return pageSize, func(db *gorm.DB) *gorm.DB {
+		offset := page * pageSize
+		return db.Offset(offset).Limit(pageSize)
+	}
+}
