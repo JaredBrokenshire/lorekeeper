@@ -1,3 +1,13 @@
+## V0.0.3 - Campaigns List
+
+### [Added]
+
+- Added campaigns table with migration and new model
+
+### [Changed]
+
+- Updated characters to include a campaign id
+
 ## V0.0.2 - Characters List
 
 ### [Added]
