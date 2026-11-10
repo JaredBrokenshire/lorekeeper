@@ -1,3 +1,29 @@
+## V0.0.2 - Characters List
+
+### [Added]
+
+- Added races table migration with new model and seeded values
+- Added classes table migration with new model and seeded values
+- Added subclasses table migration with new model and seeded values
+- Added characters table migration with new model
+- Added character_classes and character_subclasses link table migrations
+- Added character list endpoint with new service and repo
+- Added generic paginate method to db
+- Added character, class, subclass and race API response objects
+- Added character list endpoint tests with factories for required models
+- Added characters route link card to home page view
+- Added characters list view with new character service
+- Added characters seeder with example characters
+- Added character endpoints to readme
+
+### [Changed]
+
+- Updated test instructions in readme to include test docker container
+
+### [Removed]
+
+- Removed redundant endpoint descriptions from readme
+
 ## V0.0.1 - Project Initialisation
 
 ### [Added]

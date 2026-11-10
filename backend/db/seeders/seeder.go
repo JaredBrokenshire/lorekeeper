@@ -17,4 +17,8 @@ func NewSeeder(db *gorm.DB) *Seeder {
 func (s *Seeder) Seed() {
 	s.SetRoles()
 	s.SetUsers()
+	s.SetRaces()
+	s.SetClasses()
+	s.SetSubclasses()
+	s.SetCharacters()
 }

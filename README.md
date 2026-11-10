@@ -163,8 +163,6 @@ The API is served by the Go Echo application. With the default example configura
 http://api.jb-lorekeeper.com:7788
 ```
 
-All current routes are under `/auth`. JSON request and response bodies are used unless otherwise noted.
-
 ### Authentication endpoints
 
 | Method | Endpoint | Authentication | Description |
@@ -175,55 +173,11 @@ All current routes are under `/auth`. JSON request and response bodies are used 
 | `GET` | `/auth/me` | Access token | Return the authenticated user's details |
 | `POST` | `/auth/logout` | Access token | Clear the refresh-token cookie |
 
-#### Register
+### Character endpoints
 
-`POST /auth/register`
-
-```json
-{
-  "username": "adventurer",
-  "email": "adventurer@example.com",
-  "password": "change-me",
-  "confirm_password": "change-me"
-}
-```
-
-On success, the API returns an access token and user details. It also sets the `refresh_token` cookie.
-
-#### Login
-
-`POST /auth/login`
-
-```json
-{
-  "username": "adventurer",
-  "password": "change-me"
-}
-```
-
-On success, the response contains an `access_token` and `user` object. The refresh token is set as an HttpOnly cookie.
-
-#### Refresh access token
-
-`POST /auth/refresh`
-
-The refresh token is read from the `refresh_token` cookie. The request does not require a JSON body. The response contains a new access token and user details, and refreshes the cookie.
-
-#### Get the current user
-
-`GET /auth/me`
-
-Send the access token in the request header:
-
-```text
-Authorization: Bearer <access_token>
-```
-
-#### Logout
-
-`POST /auth/logout`
-
-Send the access token in the request header. The API expires the refresh-token cookie.
+| Method | Endpoint       | Query Parameters                                                                                                                                           | Description  |
+|---|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
+| `GET` | `/characters` | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned characters by name | Return a paginated list of the current user's characters. | 
 
 ### Authentication notes
 
@@ -242,7 +196,12 @@ Campaign, document, search and question-answering endpoints will be documented h
 
 Backend tests are located in `backend/tests/`.
 
-The test server uses a MySQL database configured through the test environment variables. Start a suitable MySQL instance and provide the test database settings before running the suite.
+The test server uses a MySQL database configured through the test environment variables and running in the docker compose stack.
+Start the test database docker container:
+
+```bash
+docker compose -f ./docker-compose-test.yml up --build -d
+```
 
 From the `backend` directory:
 
