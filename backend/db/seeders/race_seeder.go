@@ -68,6 +68,22 @@ func (s *Seeder) SetRaces() {
 			ID:   15,
 			Name: "Half-Orc",
 		},
+		{
+			ID:   16,
+			Name: "Air Genasi",
+		},
+		{
+			ID:   17,
+			Name: "Earth Genasi",
+		},
+		{
+			ID:   18,
+			Name: "Fire Genasi",
+		},
+		{
+			ID:   19,
+			Name: "Water Genasi",
+		},
 	}
 
 	for _, r := range races {
