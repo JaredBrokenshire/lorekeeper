@@ -7,6 +7,8 @@
 - Added notes on how AI was used during for Research & Learning, Planning & Architecture and Documentation & Testing
 - Added docker compose files and env example to project route
 - Added GitHub CI workflow and PR template
+- Created Go Echo server with GORM and go-migrations structure with initial auth routes
+- Added tests for auth routes
 
 > - **[Added]** — New features, files, endpoints, components, or dependencies introduced in this version
 > - **[Changed]** — Modifications to existing behaviour, UI, configuration, or structure that are not bug fixes
