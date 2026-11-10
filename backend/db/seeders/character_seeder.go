@@ -126,7 +126,7 @@ func (s *Seeder) SetCharacters() {
 
 	for _, data := range characters {
 		character := data.character
-		err := s.DB.Create(&character).Error
+		err := s.DB.FirstOrCreate(&character).Error
 		if err != nil {
 			logging.Logger.LogWarn().Msg(fmt.Sprintf("Error creating character with id `%v` in seeder: %v", character.ID, err.Error()))
 		}

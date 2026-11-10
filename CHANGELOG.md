@@ -10,6 +10,10 @@
 - Updated characters to include a campaign id
 - Updated character response objects to include their user and campaign
 
+### [Fixed]
+
+- Fixed character seeder trying to insert duplicate primary keys
+
 ## V0.0.2 - Characters List
 
 ### [Added]
