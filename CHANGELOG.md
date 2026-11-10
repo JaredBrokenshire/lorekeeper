@@ -1,3 +1,9 @@
+## V0.0.2 - Characters List
+
+### [Added]
+
+- Added races table migration with new model and seeded values
+
 ## V0.0.1 - Project Initialisation
 
 ### [Added]
