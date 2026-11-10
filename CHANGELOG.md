@@ -8,6 +8,7 @@
 ### [Changed]
 
 - Updated characters to include a campaign id
+- Updated character response objects to include their user and campaign
 
 ## V0.0.2 - Characters List
 

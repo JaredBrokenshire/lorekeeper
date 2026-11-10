@@ -29,7 +29,7 @@ func NewSlimCampaignResponse(campaign *models.Campaign) *SlimCampaignResponse {
 		UpdatedAt: campaign.UpdatedAt,
 	}
 
-	if campaign.DungeonMaster.ID != 0 {
+	if campaign.DungeonMaster != nil {
 		res.DM = NewSlimUserResponse(campaign.DungeonMaster)
 	}
 

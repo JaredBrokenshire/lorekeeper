@@ -7,11 +7,16 @@ type CharacterResponse struct {
 }
 
 type SlimCharacterResponse struct {
-	ID    uint   `json:"id"`
+	ID uint `json:"id"`
+
+	User *SlimUserResponse `json:"user"`
+
 	Name  string `json:"name"`
 	Level int    `json:"level"`
 
-	Race       SlimRaceResponse       `json:"race"`
+	Campaign *SlimCampaignResponse `json:"campaign"`
+
+	Race       *SlimRaceResponse      `json:"race"`
 	Classes    []SlimClassResponse    `json:"classes"`
 	Subclasses []SlimSubclassResponse `json:"subclasses"`
 }
@@ -23,8 +28,12 @@ func NewSlimCharacterResponse(character *models.Character) *SlimCharacterRespons
 		Level: character.Level,
 	}
 
-	if character.Race.ID != 0 {
-		res.Race = *NewSlimRaceResponse(character.Race)
+	if character.User != nil {
+		res.User = NewSlimUserResponse(character.User)
+	}
+
+	if character.Race != nil {
+		res.Race = NewSlimRaceResponse(character.Race)
 	}
 
 	if len(character.Classes) > 0 {
@@ -33,6 +42,10 @@ func NewSlimCharacterResponse(character *models.Character) *SlimCharacterRespons
 
 	if len(character.Subclasses) > 0 {
 		res.Subclasses = NewSubclassResponses(character.Subclasses)
+	}
+
+	if character.Campaign != nil {
+		res.Campaign = NewSlimCampaignResponse(character.Campaign)
 	}
 
 	return res
