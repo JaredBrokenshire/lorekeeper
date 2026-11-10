@@ -11,6 +11,7 @@
 - Added generic paginate method to db
 - Added character, class, subclass and race API response objects
 - Added character list endpoint tests with factories for required models
+- Added characters route link card to home page view
 
 ## V0.0.1 - Project Initialisation
 
