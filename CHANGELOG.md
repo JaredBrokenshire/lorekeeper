@@ -9,6 +9,7 @@
 - Added character_classes and character_subclasses link table migrations
 - Added character list endpoint with new service and repo
 - Added generic paginate method to db
+- Added character, class, subclass and race API response objects
 
 ## V0.0.1 - Project Initialisation
 
