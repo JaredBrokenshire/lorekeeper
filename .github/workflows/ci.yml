@@ -1,0 +1,124 @@
+name: CI
+
+# Runs on every pull request to main and development
+on:
+  pull_request:
+    branches: [main, development]
+
+jobs:
+  # ── Backend: build + test ────────────────────────────────────────────────────
+  backend:
+    name: Backend (Go)
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: testpassword
+          MYSQL_DATABASE: dnd
+          MYSQL_USER: local_user
+          MYSQL_PASSWORD: testpassword
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -u root -ptestpassword"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      # These mirror what test_server.go reads from the .env file.
+      # Using TEST_DB_HOST / TEST_EXPOSE_DB_PORT because that's what NewTestServer builds its DSN from.
+      ENVIRONMENT: development
+      PORT: 7788
+      DB_DRIVER: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_NAME: dnd
+      DB_USER: local_user
+      DB_PASSWORD: testpassword
+      TEST_DB_HOST: 127.0.0.1
+      TEST_EXPOSE_DB_PORT: 3306
+      JWT_SECRET: ci-test-secret-not-used-in-production
+      ADMIN_EMAIL: admin@example.com
+      ADMIN_PASSWORD: Admin1234!
+      CORS_ORIGINS: http://localhost:8080
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+
+      - name: Install swag (Swagger codegen)
+        run: go install github.com/swaggo/swag/cmd/swag@v1.16.6
+        working-directory: backend
+
+      - name: Generate Swagger docs
+        run: swag init -g cmd/api/api.go --output docs
+        working-directory: backend
+
+      - name: Download Go modules
+        run: go mod download
+        working-directory: backend
+
+      - name: Build backend
+        run: CGO_ENABLED=1 go build -o /dev/null ./cmd/api
+        working-directory: backend
+
+      # Write a minimal .env so the test server's godotenv.Load("../../.env") succeeds.
+      # All values are already set in the job env above; this file just prevents a
+      # "error loading .env" warning from failing the test server setup.
+      - name: Write test .env
+        run: |
+          cat > .env <<EOF
+          ENVIRONMENT=development
+          PORT=7788
+          DB_DRIVER=mysql
+          DB_HOST=127.0.0.1
+          DB_PORT=3306
+          DB_NAME=dnd
+          DB_USER=local_user
+          DB_PASSWORD=testpassword
+          TEST_DB_HOST=127.0.0.1
+          TEST_EXPOSE_DB_PORT=3306
+          JWT_SECRET=ci-test-secret-not-used-in-production
+          ADMIN_EMAIL=admin@example.com
+          ADMIN_PASSWORD=Admin1234!
+          CORS_ORIGINS=http://localhost:8080
+          EOF
+
+      - name: Run Go test suite
+        run: go test ./tests/... -v -timeout 120s
+        working-directory: backend
+
+  # ── Frontend: install + build ─────────────────────────────────────────────────
+  frontend:
+    name: Frontend (Vue)
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: frontend
+
+      - name: Build frontend
+        env:
+          # Point at a placeholder API URL for the CI build.
+          # The real value is set at deployment time.
+          VUE_APP_API_BASE_URL: https://api.example.com
+        run: npm run build
+        working-directory: frontend

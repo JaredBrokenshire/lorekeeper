@@ -6,6 +6,7 @@
 - Added `RESEARCH.md` and `AI.md` in accordance with the project brief
 - Added notes on how AI was used during for Research & Learning, Planning & Architecture and Documentation & Testing
 - Added docker compose files and env example to project route
+- Added GitHub CI workflow and PR template
 
 > - **[Added]** — New features, files, endpoints, components, or dependencies introduced in this version
 > - **[Changed]** — Modifications to existing behaviour, UI, configuration, or structure that are not bug fixes
