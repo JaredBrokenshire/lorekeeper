@@ -1,0 +1,48 @@
+package repositories
+
+import (
+	"github.com/jinzhu/gorm"
+	"lorekeeper/db"
+	"lorekeeper/db/models"
+)
+
+type CampaignRepository struct {
+	*Repository
+}
+
+func NewCampaignRepository(db *gorm.DB) *CampaignRepository {
+	return &CampaignRepository{
+		Repository: &Repository{Db: db},
+	}
+}
+
+func (r *CampaignRepository) GetCampaigns(userID interface{}, page, pageSize int, scopes []func(db *gorm.DB) *gorm.DB) ([]*models.Campaign, int, int) {
+	var campaigns []*models.Campaign
+
+	pageSize, paginateFunc := db.Paginate(page, pageSize)
+
+	r.Db.Debug().
+		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
+		Where("dungeon_master_id = ? OR characters.user_id = ?", userID, userID).
+		Preload("Characters").
+		Preload("Characters.User").
+		Preload("DungeonMaster").
+		Scopes(scopes...).
+		Scopes(paginateFunc).
+		Find(&campaigns)
+
+	return campaigns, page, pageSize
+}
+
+func (r *CampaignRepository) Count(userID interface{}, scopes []func(db *gorm.DB) *gorm.DB) int {
+	var count int64
+
+	r.Db.
+		Model(&models.Campaign{}).
+		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
+		Where("dungeon_master_id = ? OR characters.user_id = ?", userID, userID).
+		Scopes(scopes...).
+		Count(&count)
+
+	return int(count)
+}

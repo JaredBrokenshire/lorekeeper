@@ -3,6 +3,7 @@
 ### [Added]
 
 - Added campaigns table with migration and new model
+- Added campaign list endpoint with new handler, service repo and tests
 
 ### [Changed]
 
