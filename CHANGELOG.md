@@ -10,6 +10,7 @@
 - Added character list endpoint with new service and repo
 - Added generic paginate method to db
 - Added character, class, subclass and race API response objects
+- Added character list endpoint tests with factories for required models
 
 ## V0.0.1 - Project Initialisation
 
