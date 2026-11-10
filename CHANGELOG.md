@@ -5,6 +5,7 @@
 - Added races table migration with new model and seeded values
 - Added classes table migration with new model and seeded values
 - Added subclasses table migration with new model and seeded values
+- Added characters table migration with new model
 
 ## V0.0.1 - Project Initialisation
 

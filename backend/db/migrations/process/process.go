@@ -18,5 +18,6 @@ func List() []store.Migratable {
 		&list.CreateRacesTable{},
 		&list.CreateClassesTable{},
 		&list.CreateSubclassesTable{},
+		&list.CreateCharactersTable{},
 	}
 }
