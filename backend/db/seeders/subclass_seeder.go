@@ -518,6 +518,26 @@ func (s *Seeder) SetSubclasses() {
 			ClassID: 15,
 			Name:    "Order of the Profane Soul",
 		},
+		{
+			ID:      103,
+			ClassID: 6,
+			Name:    "Echo Knight",
+		},
+		{
+			ID:      104,
+			ClassID: 7,
+			Name:    "Way of the Drunken Master",
+		},
+		{
+			ID:      105,
+			ClassID: 10,
+			Name:    "Shadow Magic",
+		},
+		{
+			ID:      106,
+			ClassID: 4,
+			Name:    "Twilight Domain",
+		},
 	}
 
 	for _, subclass := range subclasses {

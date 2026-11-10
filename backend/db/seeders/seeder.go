@@ -20,4 +20,5 @@ func (s *Seeder) Seed() {
 	s.SetRaces()
 	s.SetClasses()
 	s.SetSubclasses()
+	s.SetCharacters()
 }

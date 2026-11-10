@@ -48,6 +48,26 @@ func (s *Seeder) SetRaces() {
 			ID:   10,
 			Name: "Tiefling",
 		},
+		{
+			ID:   11,
+			Name: "Dhampir",
+		},
+		{
+			ID:   12,
+			Name: "Warforged",
+		},
+		{
+			ID:   13,
+			Name: "Kobold",
+		},
+		{
+			ID:   14,
+			Name: "Half-Elf",
+		},
+		{
+			ID:   15,
+			Name: "Half-Orc",
+		},
 	}
 
 	for _, r := range races {
