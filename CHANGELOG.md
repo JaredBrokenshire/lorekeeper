@@ -9,6 +9,8 @@
 - Added GitHub CI workflow and PR template
 - Created Go Echo server with GORM and go-migrations structure with initial auth routes
 - Added tests for auth routes
+- Created Vue2 frontend with axios api request service
+- Created auth pages and route protection
 
 > - **[Added]** — New features, files, endpoints, components, or dependencies introduced in this version
 > - **[Changed]** — Modifications to existing behaviour, UI, configuration, or structure that are not bug fixes

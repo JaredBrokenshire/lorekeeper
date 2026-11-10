@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+
+    font-family: Georgia, "Palatino Linotype", "Book Antiqua", serif;
+}
+
+/* GENERAL STYLES */
+.flex-center { @apply flex items-center justify-center; }
+.flex-between { @apply flex items-center justify-between; }
+
+.transition-all { transition: all .2s ease-in-out; }
+
+.bg-texture {
+    @apply bg-[url("@/assets/images/background-texture.png")] bg-contain p-4 md:p-8 text-ink
+}
+
+pre {
+    @apply whitespace-pre-wrap
+}
+
+/* TEXT STYLES */
+h1 {
+    @apply text-2xl md:text-3xl lg:text-4xl font-bold;
+}
+h2 {
+    @apply text-xl md:text-2xl lg:text-3xl font-bold;
+}
+h3 {
+    @apply text-lg md:text-xl lg:text-2xl font-bold;
+}
+h4 {
+    @apply md:text-lg lg:text-xl;
+}
+h5 {
+    @apply text-sm md:text-base lg:text-lg;
+}
+h6 {
+    @apply text-xs md:text-sm lg:text-base;
+}
+p {
+    @apply text-xs md:text-sm lg:text-base
+}
+
+/* FORM STYLES */
+.validation-provider-container { @apply relative; }
+.validation-provider small {
+    @apply absolute;
+    bottom: calc(-1.5rem * 1lh)
+}
