@@ -1,6 +1,9 @@
 <template>
   <div class="py-8 md:py-16">
-    <div class="h-fit w-full grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16">
+    <div
+      v-if="!loading"
+      class="h-fit w-full grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16"
+    >
       <character-card
         v-for="character in characters"
         :key="`character-card-${character.id}`"
