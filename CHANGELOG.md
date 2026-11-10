@@ -14,6 +14,15 @@
 - Added characters route link card to home page view
 - Added characters list view with new character service
 - Added characters seeder with example characters
+- Added character endpoints to readme
+
+### [Changed]
+
+- Updated test instructions in readme to include test docker container
+
+### [Removed]
+
+- Removed redundant endpoint descriptions from readme
 
 ## V0.0.1 - Project Initialisation
 
