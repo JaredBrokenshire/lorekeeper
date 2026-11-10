@@ -50,10 +50,10 @@ func (s *Seeder) SetRaces() {
 		},
 	}
 
-	for _, race := range races {
-		err := s.DB.Create(&race).Error
+	for _, r := range races {
+		err := s.DB.Where("id = ?", r.ID).FirstOrCreate(&r).Error
 		if err != nil {
-			logging.Logger.LogWarn().Msg(fmt.Sprintf("Error creating race with id `%v` in seeder: %v", race.ID, s.DB.Error))
+			logging.Logger.LogWarn().Msg(fmt.Sprintf("Error creating race with id `%v` in seeder: %v", r.ID, err.Error()))
 		}
 	}
 }

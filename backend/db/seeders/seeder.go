@@ -18,4 +18,5 @@ func (s *Seeder) Seed() {
 	s.SetRoles()
 	s.SetUsers()
 	s.SetRaces()
+	s.SetClasses()
 }
