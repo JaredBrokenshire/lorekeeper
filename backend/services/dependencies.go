@@ -11,8 +11,9 @@ type Dependencies struct {
 	repos     *repositories.Repos
 	jwtSecret string
 
-	authService AuthServiceInterface
-	userService UserServiceInterface
+	authService      AuthServiceInterface
+	userService      UserServiceInterface
+	characterService CharacterServiceInterface
 }
 
 func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
@@ -49,4 +50,16 @@ func (d *Dependencies) GetUserService() UserServiceInterface {
 
 func (d *Dependencies) SetUserService(userService UserServiceInterface) {
 	d.userService = userService
+}
+
+func (d *Dependencies) GetCharacterService() CharacterServiceInterface {
+	if d.characterService == nil {
+		d.characterService = NewCharacterService(d.repos.Character)
+	}
+
+	return d.characterService
+}
+
+func (d *Dependencies) SetCharacterService(characterService CharacterServiceInterface) {
+	d.characterService = characterService
 }

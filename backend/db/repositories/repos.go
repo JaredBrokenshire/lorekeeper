@@ -7,15 +7,17 @@ import (
 type Repos struct {
 	DB *gorm.DB
 
-	User *UserRepository
-	Role *RoleRepository
+	User      *UserRepository
+	Role      *RoleRepository
+	Character *CharacterRepository
 }
 
 func NewRepos(db *gorm.DB) *Repos {
 	return &Repos{
 		DB: db,
 
-		User: NewUserRepository(db),
-		Role: NewRoleRepository(db),
+		User:      NewUserRepository(db),
+		Role:      NewRoleRepository(db),
+		Character: NewCharacterRepository(db),
 	}
 }
