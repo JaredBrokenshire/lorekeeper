@@ -6,6 +6,7 @@
 - Added classes table migration with new model and seeded values
 - Added subclasses table migration with new model and seeded values
 - Added characters table migration with new model
+- Added character_classes and character_subclasses link table migrations
 
 ## V0.0.1 - Project Initialisation
 
