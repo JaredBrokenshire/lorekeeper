@@ -36,6 +36,7 @@ func RegisterRoutes(s *api.Server) {
 	}))
 
 	authRoutes(s)
+	fileRoutes(s)
 	characterRoutes(s)
 	campaignRoutes(s)
 }

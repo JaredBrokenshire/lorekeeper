@@ -1,3 +1,9 @@
+## V0.0.5 - Local File Storage
+
+### [Added]
+
+- Added local file storage package with new endpoint for getting files
+
 ## V0.0.4 - Characters Search
 
 ### [Added]
