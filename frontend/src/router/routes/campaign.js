@@ -1,3 +1,5 @@
+import backgroundTexture from "@/assets/images/background-texture.png"
+
 export default [
   {
     path: "/campaigns",
@@ -6,6 +8,16 @@ export default [
     meta: {
       requiresAuth: true,
       showHeader: true,
+    }
+  },
+  {
+    path: "/campaigns/:id",
+    name: "campaign-details",
+    component: () => import("@/views/campaigns/CampaignDetails.vue"),
+    meta: {
+      requiresAuth: true,
+      showHeader: true,
+      backgroundImage: backgroundTexture,
     }
   }
 ]

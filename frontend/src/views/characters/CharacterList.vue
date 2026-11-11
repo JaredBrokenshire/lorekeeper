@@ -70,7 +70,7 @@
   import HelperService from "@/services/helper.service";
   import CharacterService from "@/services/character.service";
   import InputWrapper from "@/components/forms/InputWrapper.vue";
-  import CharacterCard from "@/views/characters/sections/CharacterCard.vue"
+  import CharacterCard from "@/components/characters/CharacterCard.vue"
 
   export default {
     name: "CharacterList",

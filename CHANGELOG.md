@@ -4,6 +4,7 @@
 
 - Added campaign get endpoint with new service and repo methods
 - Added mock campaign service for testing error handling
+- Added campaign details frontend view with lorekeeper and character tabs
 
 ### [Changed]
 

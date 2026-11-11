@@ -7,6 +7,9 @@ const CampaignService = {
   list(filters) {
     const queryString = HelperService.buildSearchQueryString(filters)
     return api.get(`${BASE_URL}${queryString}`)
+  },
+  get(id) {
+    return api.get(`${BASE_URL}/${id}`)
   }
 }
 
