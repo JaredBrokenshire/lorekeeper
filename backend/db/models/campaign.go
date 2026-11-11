@@ -11,6 +11,8 @@ type Campaign struct {
 
 	Characters []*Character
 
+	Files []*File `gorm:"many2many:campaign_files"`
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

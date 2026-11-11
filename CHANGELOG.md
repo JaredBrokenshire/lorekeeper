@@ -4,6 +4,7 @@
 
 - Added user factory
 - Added campaign files table with migration
+- Added new campaign files to preloads and campaign response
 
 ## V0.0.6 - Campaign Details
 

@@ -7,12 +7,20 @@ import (
 
 type CampaignResponse struct {
 	*SlimCampaignResponse
+
+	SessionNotes []FileResponse `json:"session_notes"`
 }
 
 func NewCampaignResponse(campaign *models.Campaign) *CampaignResponse {
-	return &CampaignResponse{
+	res := &CampaignResponse{
 		SlimCampaignResponse: NewSlimCampaignResponse(campaign),
 	}
+
+	if len(campaign.Files) > 0 {
+		res.SessionNotes = NewFileResponses(campaign.Files)
+	}
+
+	return res
 }
 
 type SlimCampaignResponse struct {
