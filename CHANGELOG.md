@@ -1,3 +1,10 @@
+## V0.0.4 - Characters Search
+
+### [Added]
+
+- Added search bar to characters list view
+- Added no characters card to characters list view
+
 ## V0.0.3 - Campaigns List
 
 ### [Added]
