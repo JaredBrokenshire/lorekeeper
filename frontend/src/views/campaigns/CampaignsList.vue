@@ -4,7 +4,7 @@
       <h1 class="text-gold mb-4">Campaigns</h1>
     </div>
 
-    <div class="w-full md:max-w-[50%] xl:max-w-[30%] mb-8">
+    <div class="w-full md:max-w-[50%] xl:max-w-[30%] mb-16">
       <input-wrapper
         v-model="filters.search"
         label="Search"
@@ -16,7 +16,7 @@
 
     <div
       v-if="!loading && totalCount > 0"
-      class="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3  gap-8 md:gap-16"
+      class="w-full grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3  gap-12 md:gap-16"
     >
       <campaign-card
         v-for="campaign in campaigns"

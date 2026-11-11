@@ -3,6 +3,16 @@
     :to="`/campaigns/${$props.campaign.id}`"
     class="relative w-full aspect-square max-w-[400px] mx-auto group"
   >
+    <div class="w-full absolute -top-4 h-8 xs:h-12 z-20 flex-center gap-2 md:gap-4 transition-all group-hover:scale-110">
+      <img
+        v-for="(profilePicture, index) in profilePictures"
+        :key="`campaign-card-${$props.campaign.id}-character-profile-picture-${index}`"
+        :src="profilePicture"
+        alt=""
+        class="h-full aspect-square rounded"
+      >
+    </div>
+
     <div class="absolute w-full h-full z-10">
       <svg
         class="h-full w-full"
@@ -28,8 +38,6 @@
         />
       </svg>
     </div>
-
-
 
     <div class="z-20 relative w-full h-full p-8 flex-center flex-col gap-2 md:gap-4 lg:gap-8">
       <h2 class="text-gold">{{ $props.campaign.name }}</h2>
@@ -65,6 +73,9 @@
 </template>
 
 <script>
+  import defaultProfilePicture from "@/assets/images/pages/characters/default-avatar.png"
+  import FileService from "@/services/file.service";
+
   export default {
     name: "CampaignCard",
     props: {
@@ -72,6 +83,30 @@
         type: Object,
         required: true
       },
+    },
+    data() {
+      return {
+        profilePictures: []
+      }
+    },
+    mounted() {
+      this.getProfilePictures()
+    },
+    methods: {
+      async getProfilePictures() {
+        let characters = this.$props.campaign.characters.slice(0,5)
+
+        for (let character of characters) {
+          const location = character.profile_picture.location
+          if (!location) {
+            this.profilePictures.push(defaultProfilePicture)
+            continue
+          }
+
+          const res = await FileService.get(location)
+          this.profilePictures.push(URL.createObjectURL(res.data))
+        }
+      }
     }
   }
 </script>

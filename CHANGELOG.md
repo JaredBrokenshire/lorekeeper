@@ -8,6 +8,7 @@
 - Added seeded class logos
 - Added seeded character profile pictures
 - Added character profile pictures to frontend list view
+- Added character profile pictures to campaigns list view
 
 ## V0.0.4 - Characters Search
 
