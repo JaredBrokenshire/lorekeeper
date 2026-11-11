@@ -17,7 +17,7 @@
 .transition-all { transition: all .2s ease-in-out; }
 
 .bg-texture {
-    @apply bg-[url("@/assets/images/background-texture.png")] bg-contain p-4 md:p-8 text-ink
+    @apply bg-[url("@/assets/images/pages/background-texture.png")] bg-contain p-4 md:p-8 text-ink
 }
 
 pre {

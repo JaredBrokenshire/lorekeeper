@@ -1,22 +1,36 @@
+
 <template>
-  <div class="relative min-h-screen min-w-screen overflow-x-hidden bg-cover bg-no-repeat">
-
-    <img
-      alt=""
-      class="absolute h-full w-screen z-0 object-cover"
-      src="@/assets/images/pages/background.jpg"
-    >
-
+  <div
+    :style="backgroundStyle"
+    class="min-h-screen bg-cover bg-center bg-fixed"
+  >
     <slot />
   </div>
 </template>
 
 <script>
+  import trees from "@/assets/images/pages/background.jpg"
+
   export default {
-    name: "LayoutImageBackground"
+    name: "LayoutImageBackground",
+
+    props: {
+      backgroundImage: {
+        type: String,
+        default: null
+      }
+    },
+
+    computed: {
+      backgroundStyle() {
+        return this.backgroundImage
+          ? {
+            backgroundImage: `url('${this.backgroundImage}')`
+          }
+          : {
+            backgroundImage: `url('${trees}')`
+          };
+      }
+    }
   }
 </script>
-
-<style scoped>
-
-</style>

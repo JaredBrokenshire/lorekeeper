@@ -9,6 +9,12 @@ type CampaignResponse struct {
 	*SlimCampaignResponse
 }
 
+func NewCampaignResponse(campaign *models.Campaign) *CampaignResponse {
+	return &CampaignResponse{
+		SlimCampaignResponse: NewSlimCampaignResponse(campaign),
+	}
+}
+
 type SlimCampaignResponse struct {
 	ID   uint   `json:"id"`
 	Name string `json:"name"`

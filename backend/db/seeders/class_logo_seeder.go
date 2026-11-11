@@ -37,7 +37,7 @@ func (s *Seeder) SetClassLogos() {
 			continue
 		}
 
-		filename := fmt.Sprintf("%v.png", class.ID)
+		filename := fmt.Sprintf("%v.jpeg", class.ID)
 		srcPath := filepath.Join(assetDir, filename)
 
 		data, err := os.ReadFile(srcPath)
@@ -48,7 +48,7 @@ func (s *Seeder) SetClassLogos() {
 		}
 
 		storagePath := "/classes/logos"
-		newFileName := fmt.Sprintf("%v.png", random.String(16))
+		newFileName := fmt.Sprintf("%v.jpeg", random.String(16))
 		if err := s.FileStore.Save(storagePath, bytes.NewReader(data), newFileName); err != nil {
 			logging.Logger.LogWarn().Msg(fmt.Sprintf("Seeder: error saving logo for class %q: %v", class.Name, err.Error()))
 			continue

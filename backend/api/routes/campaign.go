@@ -14,4 +14,5 @@ func campaignRoutes(s *api.Server) {
 	campaign.Use(mw.JWTAuth(os.Getenv("JWT_SECRET")))
 
 	campaign.GET("", campaignHandler.List)
+	campaign.GET("/:id", campaignHandler.Get)
 }

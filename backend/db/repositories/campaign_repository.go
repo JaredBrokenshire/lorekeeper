@@ -48,3 +48,22 @@ func (r *CampaignRepository) Count(userID interface{}, scopes []func(db *gorm.DB
 
 	return int(count)
 }
+
+func (r *CampaignRepository) GetByID(id, userID interface{}) *models.Campaign {
+	campaign := &models.Campaign{}
+
+	r.Db.
+		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
+		Where("campaigns.id = ? AND (dungeon_master_id = ? OR characters.user_id = ?)", id, userID, userID).
+		Preload("Characters").
+		Preload("Characters.User").
+		Preload("Characters.Race").
+		Preload("Characters.Classes").
+		Preload("Characters.Classes.Logo").
+		Preload("Characters.Subclasses").
+		Preload("Characters.ProfilePicture").
+		Preload("DungeonMaster").
+		First(campaign)
+
+	return campaign
+}

@@ -123,7 +123,6 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
 
-					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
@@ -167,7 +166,6 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, subclass.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
 
-					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
@@ -218,8 +216,6 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, class2.Name),
 
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
-
-					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
 					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
@@ -273,8 +269,6 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, class3.Name),
 
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
-
-					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
 					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),

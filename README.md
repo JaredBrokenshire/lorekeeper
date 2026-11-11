@@ -139,21 +139,21 @@ The production build is written to `frontend/dist/`.
 
 ## Technology stack
 
-| Area | Technology |
-|---|---|
-| Frontend | Vue 2.7, Vue Router, Vuex |
-| HTTP client | Axios |
-| Styling | Tailwind CSS |
-| Frontend tooling | Vue CLI, Babel, ESLint |
-| Backend | Go, Echo |
-| Database | MySQL 8 |
-| Database access | GORM (legacy `github.com/jinzhu/gorm`) and sqlx |
-| Database migrations | go-migrations |
-| Authentication | JWT access tokens and HttpOnly refresh-token cookie |
-| Validation | go-playground/validator |
-| API documentation generation | Swaggo |
-| Local environment | Docker, Docker Compose |
-| CI | GitHub Actions |
+| Area                         | Technology                                          |
+|------------------------------|-----------------------------------------------------|
+| Frontend                     | Vue 2.7, Vue Router, Vuex                           |
+| HTTP client                  | Axios                                               |
+| Styling                      | Tailwind CSS                                        |
+| Frontend tooling             | Vue CLI, Babel, ESLint                              |
+| Backend                      | Go, Echo                                            |
+| Database                     | MySQL 8                                             |
+| Database access              | GORM (legacy `github.com/jinzhu/gorm`) and sqlx     |
+| Database migrations          | go-migrations                                       |
+| Authentication               | JWT access tokens and HttpOnly refresh-token cookie |
+| Validation                   | go-playground/validator                             |
+| API documentation generation | Swaggo                                              |
+| Local environment            | Docker, Docker Compose                              |
+| CI                           | GitHub Actions                                      |
 
 ## API
 
@@ -165,19 +165,26 @@ http://api.jb-lorekeeper.com:7788
 
 ### Authentication endpoints
 
-| Method | Endpoint | Authentication | Description |
-|---|---|---|---|
-| `POST` | `/auth/register` | Public | Register a user |
-| `POST` | `/auth/login` | Public | Log in and obtain an access token |
-| `POST` | `/auth/refresh` | Refresh-token cookie | Exchange a valid refresh token for a new access token |
-| `GET` | `/auth/me` | Access token | Return the authenticated user's details |
-| `POST` | `/auth/logout` | Access token | Clear the refresh-token cookie |
+| Method | Endpoint         | Authentication       | Description                                           |
+|--------|------------------|----------------------|-------------------------------------------------------|
+| `POST` | `/auth/register` | Public               | Register a user                                       |
+| `POST` | `/auth/login`    | Public               | Log in and obtain an access token                     |
+| `POST` | `/auth/refresh`  | Refresh-token cookie | Exchange a valid refresh token for a new access token |
+| `GET`  | `/auth/me`       | Access token         | Return the authenticated user's details               |
+| `POST` | `/auth/logout`   | Access token         | Clear the refresh-token cookie                        |
 
 ### Character endpoints
 
-| Method | Endpoint       | Query Parameters                                                                                                                                           | Description  |
-|---|----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|---|
-| `GET` | `/characters` | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned characters by name | Return a paginated list of the current user's characters. | 
+| Method | Endpoint        | Query Parameters                                                                                                                                           | Description                                               |
+|--------|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| `GET`  | `/characters`   | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned characters by name | Return a paginated list of the current user's characters. |
+
+### Campaign endpoints
+
+| Method | Endpoint         | Path Parameters        | Query Parameters                                                                                                                                          | Description                                              |
+|--------|------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| `GET`  | `/campaigns`     |                        | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned campaigns by name | Return a paginated list of the current user's campaigns. | 
+| `GET`  | `/campaigns/:id` | - id = The campaign id |                                                                                                                                                           | Return a campaign.                                       | 
 
 ### Authentication notes
 
@@ -245,20 +252,29 @@ The GitHub Actions workflow at `.github/workflows/ci.yml` runs on pull requests 
 │   └── workflows/       # GitHub Actions CI
 ├── backend/
 │   ├── api/              # Echo server, handlers, requests, responses and routes
+│   ├── assets/           # Local storage target directory
 │   ├── cmd/api/          # API application entry point
 │   ├── config/           # Backend configuration
 │   ├── db/
+│   │   ├── factories/    # Model factories
 │   │   ├── migrations/   # Database migrations
 │   │   ├── models/       # GORM models
 │   │   ├── repositories/ # Database repositories
 │   │   └── seeders/      # Initial/reference data
+│   │       └── assets/   # Seeded assets
+│   ├── docker/           # Backend Dockerfile
+│   ├── pkg/              # Imported packages
 │   ├── services/         # Application/business logic
-│   ├── tests/            # Backend integration tests and test helpers
-│   └── docker/           # Backend Dockerfile
+│   └── tests/            # Backend integration tests and test helpers
+│       ├── helpers/      # Test helper methods
+│       └── mocks/        # Service mocks
 ├── frontend/
 │   └── src/
 │       ├── @core/        # Shared frontend utilities and components
+│       ├── assets/       # Asset files (images, css etc.)
 │       ├── components/   # Reusable Vue components
+│       ├── layouts/      # Reusable Vue layouts
+│       ├── libs/         # Imported libraries
 │       ├── router/       # Vue Router configuration
 │       ├── services/     # Axios API client and frontend services
 │       ├── store/        # Vuex store and modules

@@ -1,3 +1,24 @@
+## V0.0.6 - Campaign Details
+
+### [Added]
+
+- Added campaign get endpoint with new service and repo methods
+- Added mock campaign service for testing error handling
+- Added campaign details frontend view with lorekeeper and character tabs
+
+### [Changed]
+
+- Updated README file tree and endpoint descriptions
+- Moved CharacterCard to components directory
+- Updated image background layout to allow routes to select image
+- Moved background texture image to assets/pages directory
+- Changed all class logo images
+- Redesigned character card component
+
+### [Removed]
+
+- Removed preloaded user from characters list endpoint
+
 ## V0.0.5 - Local File Storage
 
 ### [Added]
