@@ -8,6 +8,7 @@
 ### [Changed]
 
 - Updated README file tree and endpoint descriptions
+- Moved CharacterCard to components directory
 
 ## V0.0.5 - Local File Storage
 
