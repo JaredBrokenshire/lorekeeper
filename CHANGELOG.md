@@ -6,6 +6,7 @@
 - Added campaign list endpoint with new handler, service repo and tests
 - Added campaigns seeder and updated seeded characters to include campaign ids
 - Added character with no campaign id
+- Added campaigns route link card to home page
 
 ### [Changed]
 
