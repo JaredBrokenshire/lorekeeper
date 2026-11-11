@@ -5,6 +5,7 @@
 - Added local file storage package with new endpoint for getting files
 - Added logos to class models
 - Added profile pictures to character models
+- Added seeded class logos
 
 ## V0.0.4 - Characters Search
 
