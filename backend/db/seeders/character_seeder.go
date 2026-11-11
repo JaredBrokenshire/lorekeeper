@@ -39,7 +39,7 @@ func (s *Seeder) SetCharacters() {
 		{
 			character: models.Character{
 				ID:         3,
-				UserID:     2, // TestUser
+				UserID:     1, // JBrokenshire
 				Name:       "Ira",
 				Level:      3,
 				RaceID:     6, // Goliath

@@ -21,7 +21,7 @@ func (r *CampaignRepository) GetCampaigns(userID interface{}, page, pageSize int
 
 	pageSize, paginateFunc := db.Paginate(page, pageSize)
 
-	r.Db.Debug().
+	r.Db.
 		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
 		Where("dungeon_master_id = ? OR characters.user_id = ?", userID, userID).
 		Preload("Characters").
@@ -29,6 +29,7 @@ func (r *CampaignRepository) GetCampaigns(userID interface{}, page, pageSize int
 		Preload("DungeonMaster").
 		Scopes(scopes...).
 		Scopes(paginateFunc).
+		Group("campaigns.id").
 		Find(&campaigns)
 
 	return campaigns, page, pageSize
