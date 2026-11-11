@@ -6,6 +6,7 @@
 - Added logos to class models
 - Added profile pictures to character models
 - Added seeded class logos
+- Added seeded character profile pictures
 
 ## V0.0.4 - Characters Search
 

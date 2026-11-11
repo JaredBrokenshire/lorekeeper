@@ -28,6 +28,7 @@ func (s *Seeder) Seed() {
 	s.SetSubclasses()
 	s.SetCampaigns()
 	s.SetCharacters()
+	s.SetCharacterProfilePictures()
 }
 
 // resolveDir returns the first path (trying cwd, then ../cwd, then ../../cwd)
