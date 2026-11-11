@@ -51,27 +51,39 @@ func TestCharacter_List(t *testing.T) {
 	subclass3 := &models.Subclass{ClassID: class3.ID}
 	factories.NewSubclass(ts.S.DB, subclass3)
 
+	profilePicture := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture)
+	profilePicture2 := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture2)
+	profilePicture3 := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture3)
+	profilePicture4 := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture4)
+
 	character := &models.Character{
-		RaceID:     race.ID,
-		CampaignID: campaign.ID,
-		Classes:    []*models.Class{class, class2},
-		Subclasses: []*models.Subclass{subclass, subclass2},
+		RaceID:           race.ID,
+		CampaignID:       campaign.ID,
+		Classes:          []*models.Class{class, class2},
+		Subclasses:       []*models.Subclass{subclass, subclass2},
+		ProfilePictureID: profilePicture.ID,
 	}
 	factories.NewCharacter(ts.S.DB, character)
 	character2 := &models.Character{
-		RaceID:     race2.ID,
-		Classes:    []*models.Class{class2},
-		Subclasses: []*models.Subclass{subclass2},
+		RaceID:           race2.ID,
+		Classes:          []*models.Class{class2},
+		Subclasses:       []*models.Subclass{subclass2},
+		ProfilePictureID: profilePicture2.ID,
 	}
 	factories.NewCharacter(ts.S.DB, character2)
 	namedCharacter := &models.Character{
-		Name:       "Test Character",
-		RaceID:     race3.ID,
-		Classes:    []*models.Class{class3},
-		Subclasses: []*models.Subclass{subclass3},
+		Name:             "Test Character",
+		RaceID:           race3.ID,
+		Classes:          []*models.Class{class3},
+		Subclasses:       []*models.Subclass{subclass3},
+		ProfilePictureID: profilePicture3.ID,
 	}
 	factories.NewCharacter(ts.S.DB, namedCharacter)
-	otherUserCharacter := &models.Character{UserID: 999}
+	otherUserCharacter := &models.Character{UserID: 999, ProfilePictureID: profilePicture4.ID}
 	factories.NewCharacter(ts.S.DB, otherUserCharacter)
 
 	getRequest := func(query string) helpers.Request {
@@ -114,6 +126,13 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
+
 					fmt.Sprintf(`"name":"%v"`, logo.Name),
 					fmt.Sprintf(`"location":"%v"`, logo.Location),
 					fmt.Sprintf(`"name":"%v"`, logo2.Name),
@@ -125,6 +144,9 @@ func TestCharacter_List(t *testing.T) {
 				},
 				BodyPartsMissing: []string{
 					fmt.Sprintf(`"name":"%v"`, otherUserCharacter.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture4.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture4.Location),
 				},
 			},
 		},
@@ -148,6 +170,9 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+
 					fmt.Sprintf(`"name":"%v"`, logo.Name),
 					fmt.Sprintf(`"location":"%v"`, logo.Location),
 					fmt.Sprintf(`"name":"%v"`, logo2.Name),
@@ -166,6 +191,13 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, class3.Name),
 
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture4.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture4.Location),
 
 					fmt.Sprintf(`"name":"%v"`, logo3.Name),
 					fmt.Sprintf(`"location":"%v"`, logo3.Location),
@@ -189,6 +221,9 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+
 					fmt.Sprintf(`"name":"%v"`, logo2.Name),
 					fmt.Sprintf(`"location":"%v"`, logo2.Location),
 
@@ -209,6 +244,13 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
 
 					fmt.Sprintf(`"name":"%v"`, campaign.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture4.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture4.Location),
 
 					fmt.Sprintf(`"name":"%v"`, logo.Name),
 					fmt.Sprintf(`"location":"%v"`, logo.Location),
@@ -234,6 +276,9 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
+
 					fmt.Sprintf(`"name":"%v"`, logo3.Name),
 					fmt.Sprintf(`"location":"%v"`, logo3.Location),
 
@@ -254,6 +299,13 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
 
 					fmt.Sprintf(`"name":"%v"`, campaign.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture4.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture4.Location),
 
 					fmt.Sprintf(`"name":"%v"`, logo.Name),
 					fmt.Sprintf(`"location":"%v"`, logo.Location),
