@@ -1,3 +1,8 @@
+## V0.0.7 - Campaign Notes Upload
+### [Added]
+
+- Added user factory
+
 ## V0.0.6 - Campaign Details
 
 ### [Added]
