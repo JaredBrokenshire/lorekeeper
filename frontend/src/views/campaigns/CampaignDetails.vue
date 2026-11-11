@@ -43,7 +43,7 @@
 
     <!-- Characters Tab -->
     <div v-if="activeTab === 'characters'">
-      <h3 class="text-ink mb-2">
+      <h3 class="text-ink mb-4">
         Active Characters ({{ campaign.characters.length }})
       </h3>
 
