@@ -1,4 +1,4 @@
-import backgroundTexture from "@/assets/images/background-texture.png"
+import backgroundTexture from "@/assets/images/pages/background-texture.png"
 
 export default [
   {
