@@ -11,13 +11,21 @@ type ClassResponse struct {
 type SlimClassResponse struct {
 	ID   uint   `json:"id"`
 	Name string `json:"name"`
+
+	Logo *FileResponse `json:"logo"`
 }
 
 func NewSlimClassResponse(class *models.Class) *SlimClassResponse {
-	return &SlimClassResponse{
+	res := &SlimClassResponse{
 		ID:   class.ID,
 		Name: class.Name,
 	}
+
+	if class.Logo != nil {
+		res.Logo = NewFileResponse(class.Logo)
+	}
+
+	return res
 }
 
 func NewClassResponses(classes []*models.Class) []SlimClassResponse {

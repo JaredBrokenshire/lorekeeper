@@ -23,11 +23,18 @@ func TestCampaign_List(t *testing.T) {
 	neverReturnCampaign := &models.Campaign{DungeonMasterID: 999}
 	factories.NewCampaign(ts.S.DB, neverReturnCampaign)
 
-	character := &models.Character{CampaignID: otherUserCampaign.ID}
+	profilePicture := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture)
+	profilePicture2 := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture2)
+	profilePicture3 := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture3)
+
+	character := &models.Character{CampaignID: otherUserCampaign.ID, ProfilePictureID: profilePicture.ID}
 	factories.NewCharacter(ts.S.DB, character)
-	otherUserCharacter := &models.Character{UserID: ts.TestUser.ID, CampaignID: campaign.ID}
+	otherUserCharacter := &models.Character{UserID: ts.TestUser.ID, CampaignID: campaign.ID, ProfilePictureID: profilePicture2.ID}
 	factories.NewCharacter(ts.S.DB, otherUserCharacter)
-	neverReturnCharacter := &models.Character{UserID: 999, CampaignID: neverReturnCampaign.ID}
+	neverReturnCharacter := &models.Character{UserID: 999, CampaignID: neverReturnCampaign.ID, ProfilePictureID: profilePicture3.ID}
 	factories.NewCharacter(ts.S.DB, neverReturnCharacter)
 
 	getRequest := func(query string) helpers.Request {
@@ -57,11 +64,19 @@ func TestCampaign_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, character.Name),
 					fmt.Sprintf(`"name":"%v"`, otherUserCharacter.Name),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+
 					`"total_count":3`,
 				},
 				BodyPartsMissing: []string{
 					fmt.Sprintf(`"name":"%v"`, neverReturnCampaign.Name),
 					fmt.Sprintf(`"name":"%v"`, neverReturnCharacter.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
 				},
 			},
 		},
@@ -78,6 +93,9 @@ func TestCampaign_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, otherUserCharacter.Name),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+
 					`"total_count":3`,
 				},
 				BodyPartsMissing: []string{
@@ -86,6 +104,11 @@ func TestCampaign_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, neverReturnCampaign.Name),
 					fmt.Sprintf(`"name":"%v"`, character.Name),
 					fmt.Sprintf(`"name":"%v"`, neverReturnCharacter.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
 				},
 			},
 		},
@@ -102,6 +125,9 @@ func TestCampaign_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, character.Name),
 
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+
 					`"total_count":3`,
 				},
 				BodyPartsMissing: []string{
@@ -110,6 +136,11 @@ func TestCampaign_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, neverReturnCampaign.Name),
 					fmt.Sprintf(`"name":"%v"`, otherUserCharacter.Name),
 					fmt.Sprintf(`"name":"%v"`, neverReturnCharacter.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
 				},
 			},
 		},
@@ -130,6 +161,13 @@ func TestCampaign_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, character.Name),
 					fmt.Sprintf(`"name":"%v"`, otherUserCharacter.Name),
 					fmt.Sprintf(`"name":"%v"`, neverReturnCharacter.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture2.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
+					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
 				},
 			},
 		},

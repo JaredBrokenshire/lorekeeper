@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/jinzhu/gorm"
 	"lorekeeper/db/repositories"
+	"lorekeeper/pkg/file_storage"
 	"os"
 )
 
@@ -11,6 +12,10 @@ type Dependencies struct {
 	repos     *repositories.Repos
 	jwtSecret string
 
+	// File Storage
+	fileStore file_storage.Store
+
+	// Services
 	authService      AuthServiceInterface
 	userService      UserServiceInterface
 	characterService CharacterServiceInterface
@@ -27,6 +32,18 @@ func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
 
 func (d *Dependencies) GetDB() *gorm.DB {
 	return d.db
+}
+
+func (d *Dependencies) GetFileStore() file_storage.Store {
+	if d.fileStore == nil {
+		d.fileStore = file_storage.NewLocalStorage("assets/files")
+	}
+
+	return d.fileStore
+}
+
+func (d *Dependencies) SetFileStore(fileStore file_storage.Store) {
+	d.fileStore = fileStore
 }
 
 func (d *Dependencies) GetAuthService() AuthServiceInterface {

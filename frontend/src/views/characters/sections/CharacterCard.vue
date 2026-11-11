@@ -23,9 +23,16 @@
           fill="#10161ADB"
         />
 
-        <path
-          class="transition-all fill-transparent group-hover:fill-[#FFFFFF40]"
-          d="M223.79241,153.59a27.608,27.608,0,0,0-.92665-3c-1.70385-4.27-1.12594-39.26-1.12594-39.26s0-12.67-.57791-30.9c-.34874-11.2,1.56437-25,3.08887-33.94a8.35593,8.35593,0,0,1-2.98922-8.09,11.90127,11.90127,0,0,1,.78717-2.54,28.715,28.715,0,0,1,.25908-3.46c-.81706-5.25-1.116-10.74-3.63688-15.42s-6.82542-7.78-10.6018-11.19c-.0797-.08-.12954-.15-.1993-.23-2.212-1.06-4.59343-1.79-6.75563-3a6.12742,6.12742,0,0,1-.837-.57H30.07152c-.77719.52-1.58428,1-2.34155,1.57a4.15331,4.15331,0,0,1-2.81982.68c-6.20761,5.4-13.023,9-15.67347,17.58a47.09122,47.09122,0,0,0-1.7736,9.43,3.20851,3.20851,0,0,1,.09964.42c.269,1.51.41849,3,.568,4.54,0,0,.12954.91.12954,1a14.64046,14.64046,0,0,0,.548,1.93,4.62021,4.62021,0,0,1-1.46472,4.95,5.5453,5.5453,0,0,1-2.48105,3c1.50457,9,3.328,22.38,2.98922,33.33-.57792,18.23-.57792,30.9-.57792,30.9s.57792,35-1.12593,39.26a27.95546,27.95546,0,0,0-1.08609,3.65A4.77275,4.77275,0,0,1,8.051,157.4c1.30529,4,.40853,8.33-.7772,12.49A4.69483,4.69483,0,0,1,7.473,171c1.13591,12.88,10.08363,21.75,21.42273,26.68A4.7335,4.7335,0,0,1,30.71919,199h165.0244c1.933-.54,3.89595-1,5.78912-1.65a3.81486,3.81486,0,0,1,1.30529-.86,4.58851,4.58851,0,0,1,2.41131-1.31l.74731-.19a3.86723,3.86723,0,0,1,1.05618-.81c1.24551-.62,2.54083-1.18,3.77639-1.85a17.07178,17.07178,0,0,1,1.70385-1.4,3.15462,3.15462,0,0,1,.64765-.36c.0797-.09.15943-.17.22919-.26s.568-.83.568-.83a5.37543,5.37543,0,0,1,2.45115-2.06c.44839-.55.87684-1.12,1.28537-1.69l.09965-.12a37.40281,37.40281,0,0,0,4.703-17.11,3.01265,3.01265,0,0,1,0-.31c-1.64406-3.32-1.2754-6.59-1.5245-10.19A4.68107,4.68107,0,0,1,223.79241,153.59Z"
+        <!-- Background image clipped to card shape -->
+        <image
+          :clip-path="`url(#clip-path-character-card-${$props.character.id})`"
+          :href="profilePicture"
+          class="absolute object-cover opacity-50 group-hover:opacity-100 transition-all"
+          height="224"
+          preserveAspectRatio="xMidYMid slice"
+          width="224"
+          x="0"
+          y="0"
         />
 
         <path
@@ -63,12 +70,35 @@
 </template>
 
 <script>
+  import FileService from "@/services/file.service";
+  import defaultProfilePicture from "@/assets/images/pages/characters/default-avatar.png"
+
   export default {
     name: "CharacterCard",
     props: {
       character: {
         type: Object,
         required: true
+      }
+    },
+    data() {
+      return {
+        profilePicture: "",
+      }
+    },
+    mounted() {
+      this.getProfilePicture()
+    },
+    methods: {
+      async getProfilePicture() {
+        const location = this.$props.character.profile_picture?.location
+        if (!location) {
+          this.profilePicture = defaultProfilePicture
+          return
+        }
+
+        const res = await FileService.get(location)
+        this.profilePicture = URL.createObjectURL(res.data)
       }
     }
   }

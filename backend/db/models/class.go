@@ -5,4 +5,7 @@ type Class struct {
 	Name string
 
 	Subclasses []*Subclass
+
+	LogoID uint
+	Logo   *File `gorm:"foreignkey:LogoID"`
 }

@@ -16,4 +16,7 @@ type Character struct {
 
 	CampaignID uint
 	Campaign   *Campaign
+
+	ProfilePictureID uint
+	ProfilePicture   *File `gorm:"foreignkey:ProfilePictureID"`
 }

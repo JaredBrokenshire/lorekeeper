@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	database "lorekeeper/db"
 	"lorekeeper/db/repositories"
+	"lorekeeper/pkg/file_storage"
 	"lorekeeper/services"
 	"time"
 )
@@ -23,7 +24,9 @@ func NewServer() *Server {
 	}
 	time.Local = utc
 
-	db, err := database.Init()
+	fileStore := file_storage.NewLocalStorage("assets/files")
+
+	db, err := database.Init(fileStore)
 	if err != nil {
 		panic(err)
 	}
@@ -35,6 +38,7 @@ func NewServer() *Server {
 
 	s.Repos = repositories.NewRepos(s.DB)
 	s.Dependencies = services.NewDependencies(s.DB, s.Repos)
+	s.Dependencies.SetFileStore(fileStore)
 
 	return s
 }

@@ -26,6 +26,7 @@ func (r *CampaignRepository) GetCampaigns(userID interface{}, page, pageSize int
 		Where("dungeon_master_id = ? OR characters.user_id = ?", userID, userID).
 		Preload("Characters").
 		Preload("Characters.User").
+		Preload("Characters.ProfilePicture").
 		Preload("DungeonMaster").
 		Scopes(scopes...).
 		Scopes(paginateFunc).
