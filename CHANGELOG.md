@@ -9,6 +9,7 @@
 ### [Changed]
 
 - Updated files table to include an author id
+- Updated file response to include author as a user response object
 
 ## V0.0.6 - Campaign Details
 

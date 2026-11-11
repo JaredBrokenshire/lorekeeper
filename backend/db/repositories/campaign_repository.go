@@ -56,6 +56,7 @@ func (r *CampaignRepository) GetByID(id, userID interface{}) *models.Campaign {
 		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
 		Where("campaigns.id = ? AND (dungeon_master_id = ? OR characters.user_id = ?)", id, userID, userID).
 		Preload("Files").
+		Preload("Files.Author").
 		Preload("Characters").
 		Preload("Characters.User").
 		Preload("Characters.Race").
