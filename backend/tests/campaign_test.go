@@ -204,7 +204,10 @@ func TestCampaign_Get(t *testing.T) {
 	profilePicture := &models.File{}
 	factories.NewFile(ts.S.DB, profilePicture)
 
-	class := &models.Class{}
+	logo := &models.File{}
+	factories.NewFile(ts.S.DB, logo)
+
+	class := &models.Class{LogoID: logo.ID}
 	factories.NewClass(ts.S.DB, class)
 
 	subclass := &models.Subclass{ClassID: class.ID}
@@ -305,6 +308,9 @@ func TestCampaign_Get(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, race.Name),
 					fmt.Sprintf(`"name":"%v"`, class.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass.Name),
+
+					fmt.Sprintf(`"name":"%v"`, logo.Name),
+					fmt.Sprintf(`"location":"%v"`, logo.Location),
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
 					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),

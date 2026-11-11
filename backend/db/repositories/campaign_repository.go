@@ -59,6 +59,7 @@ func (r *CampaignRepository) GetByID(id, userID interface{}) *models.Campaign {
 		Preload("Characters.User").
 		Preload("Characters.Race").
 		Preload("Characters.Classes").
+		Preload("Characters.Classes.Logo").
 		Preload("Characters.Subclasses").
 		Preload("Characters.ProfilePicture").
 		Preload("DungeonMaster").
