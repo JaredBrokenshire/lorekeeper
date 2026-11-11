@@ -1,5 +1,9 @@
+
 <template>
-  <component :is="layout">
+  <component
+    :is="layout"
+    :background-image="backgroundImage"
+  >
     <div class="relative min-h-screen max-w-screen flex flex-col">
       <page-header
         v-if="showHeader"
@@ -18,9 +22,9 @@
 </template>
 
 <script>
-  import PageHeader from "@/components/PageHeader.vue"
+  import PageHeader from "@/components/PageHeader.vue";
 
-  const LayoutImageBackground = () => import("@/layouts/LayoutImageBackground.vue")
+  const LayoutImageBackground = () => import("@/layouts/LayoutImageBackground.vue");
 
   export default {
     name: 'App',
@@ -30,12 +34,14 @@
     data() {
       return {
         layout: LayoutImageBackground,
-        showHeader: !!this.$route.meta.showHeader
+        showHeader: !!this.$route.meta.showHeader,
+        backgroundImage: this.$route.meta.backgroundImage || null
       }
     },
     watch: {
-      $route(to, _) {
-        this.showHeader = !!to.meta.showHeader
+      $route(to) {
+        this.showHeader = !!to.meta.showHeader;
+        this.backgroundImage = to.meta.backgroundImage || null;
       }
     }
   }

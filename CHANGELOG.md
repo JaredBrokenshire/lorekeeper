@@ -9,6 +9,7 @@
 
 - Updated README file tree and endpoint descriptions
 - Moved CharacterCard to components directory
+- Updated image background layout to allow routes to select image
 
 ## V0.0.5 - Local File Storage
 
