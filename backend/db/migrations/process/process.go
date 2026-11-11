@@ -24,5 +24,6 @@ func List() []store.Migratable {
 		&list.CreateCampaignsTable{},
 		&list.UpdateCharactersAddCampaignId{},
 		&list.CreateFilesTable{},
+		&list.UpdateClassesAddLogo{},
 	}
 }

@@ -3,6 +3,7 @@
 ### [Added]
 
 - Added local file storage package with new endpoint for getting files
+- Added logos to class models
 
 ## V0.0.4 - Characters Search
 

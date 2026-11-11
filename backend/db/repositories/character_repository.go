@@ -24,6 +24,7 @@ func (r *CharacterRepository) GetCharacters(userID interface{}, page, pageSize i
 	r.Db.
 		Preload("Race").
 		Preload("Classes").
+		Preload("Classes.Logo").
 		Preload("Subclasses").
 		Preload("Campaign").
 		Preload("User").
