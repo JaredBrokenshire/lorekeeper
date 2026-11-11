@@ -6,7 +6,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"lorekeeper/api"
 	"lorekeeper/api/responses"
-	"lorekeeper/pkg/logging"
 	"net/http"
 	"strconv"
 )
@@ -33,10 +32,6 @@ func NewCharacterHandler(server *api.Server) *CharacterHandler {
 // @Router /characters [get]
 func (h *CharacterHandler) List(c echo.Context) error {
 	userID := c.Get("userID").(uint)
-	if userID == 0 {
-		logging.Logger.LogWarn().Msg("auth/me user not found")
-		return responses.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
-	}
 
 	page, _ := strconv.Atoi(c.QueryParam("page"))
 	pageSize, _ := strconv.Atoi(c.QueryParam("page_size"))
