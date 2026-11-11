@@ -20,5 +20,6 @@ func (s *Seeder) Seed() {
 	s.SetRaces()
 	s.SetClasses()
 	s.SetSubclasses()
+	s.SetCampaigns()
 	s.SetCharacters()
 }

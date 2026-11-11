@@ -6,10 +6,10 @@
         class="w-screen shadow-lg shadow-ink"
       />
 
-      <div class="w-full flex-grow mx-auto flex justify-center md:items-center p-4 md:p-8">
-        <div class="max-w-[1340px] mx-auto relative flex-grow">
-          <div class="flex-grow w-full h-full">
-            <router-view class="flex-grow" />
+      <div class="w-full min-h-full flex-grow mx-auto flex justify-center p-4 md:p-8">
+        <div class="max-w-[1340px] mx-auto relative flex-grow min-h-full">
+          <div class="flex flex-grow w-full min-h-full">
+            <router-view class="flex flex-col flex-grow" />
           </div>
         </div>
       </div>

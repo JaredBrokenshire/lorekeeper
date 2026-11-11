@@ -15,6 +15,7 @@
 
 <script>
   import HomeCard from "@/views/home/sections/HomeCard.vue";
+  import CampaignsImage from "@/assets/images/pages/home/campaigns.png"
   import CharactersImage from "@/assets/images/pages/home/characters.png"
 
   export default {
@@ -28,6 +29,12 @@
             bodyText: "Create your character in seconds with our digital builder",
             route: "/characters",
             imagePath: CharactersImage,
+          },
+          {
+            title: "Campaigns",
+            bodyText: "Collect all of your players in one place, keep track of rolls, and adventure together",
+            route: "/campaigns",
+            imagePath: CampaignsImage,
           },
         ]
       }

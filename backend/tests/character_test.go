@@ -16,7 +16,11 @@ func TestCharacter_List(t *testing.T) {
 	ts.ClearTable("characters")
 	ts.ClearTable("character_classes")
 	ts.ClearTable("character_subclasses")
+	ts.ClearTable("campaigns")
 	ts.SetupDefaultUsers()
+
+	campaign := &models.Campaign{}
+	factories.NewCampaign(ts.S.DB, campaign)
 
 	race := &models.Race{}
 	factories.NewRace(ts.S.DB, race)
@@ -41,6 +45,7 @@ func TestCharacter_List(t *testing.T) {
 
 	character := &models.Character{
 		RaceID:     race.ID,
+		CampaignID: campaign.ID,
 		Classes:    []*models.Class{class, class2},
 		Subclasses: []*models.Subclass{subclass, subclass2},
 	}
@@ -98,6 +103,9 @@ func TestCharacter_List(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
 
+					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+					fmt.Sprintf(`"name":"%v"`, campaign.Name),
+
 					`"total_count":3`,
 				},
 				BodyPartsMissing: []string{
@@ -121,6 +129,9 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, subclass.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
+
+					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 
 					`"total_count":3`,
 				},
@@ -153,6 +164,8 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
 
+					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+
 					`"total_count":3`,
 				},
 				BodyPartsMissing: []string{
@@ -168,6 +181,8 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, subclass.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
+
+					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 				},
 			},
 		},
@@ -186,6 +201,8 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, subclass3.Name),
 
+					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+
 					`"total_count":1`,
 				},
 				BodyPartsMissing: []string{
@@ -201,6 +218,8 @@ func TestCharacter_List(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, subclass.Name),
 					fmt.Sprintf(`"name":"%v"`, subclass2.Name),
+
+					fmt.Sprintf(`"name":"%v"`, campaign.Name),
 				},
 			},
 		},

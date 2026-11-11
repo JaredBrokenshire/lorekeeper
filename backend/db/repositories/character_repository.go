@@ -25,10 +25,11 @@ func (r *CharacterRepository) GetCharacters(userID interface{}, page, pageSize i
 		Preload("Race").
 		Preload("Classes").
 		Preload("Subclasses").
+		Preload("Campaign").
+		Preload("User").
 		Scopes(scopes...).
 		Scopes(paginateFunc).
 		Where("user_id = ?", userID).
-		Limit(pageSize).
 		Find(&characters)
 
 	return characters, page, pageSize

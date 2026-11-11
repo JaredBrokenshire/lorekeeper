@@ -2,7 +2,7 @@
   <div class="py-8 md:py-16">
     <div
       v-if="!loading"
-      class="h-fit w-full grid grid-cols-1 lg:grid-cols-3 gap-8 md:gap-16"
+      class="h-fit w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16"
     >
       <character-card
         v-for="character in characters"
@@ -56,7 +56,7 @@
           this.filters.page_size = res.data.meta.page_size;
           this.totalCount = res.data.meta.total_count;
         } catch (error) {
-          let errorText = "Could not get races, please refresh and try again";
+          let errorText = "Could not get characters, please refresh and try again";
 
           if (res && res.data.error) {
             errorText = res.data.error;

@@ -1,3 +1,24 @@
+## V0.0.3 - Campaigns List
+
+### [Added]
+
+- Added campaigns table with migration and new model
+- Added campaign list endpoint with new handler, service repo and tests
+- Added campaigns seeder and updated seeded characters to include campaign ids
+- Added character with no campaign id
+- Added campaigns route link card to home page
+- Added campaigns list page with debounced search bar and new service
+
+### [Changed]
+
+- Updated characters to include a campaign id
+- Updated character response objects to include their user and campaign
+- Changed page layout for all pages so they're all the full height of the screen, updated all to match
+
+### [Fixed]
+
+- Fixed character seeder trying to insert duplicate primary keys
+
 ## V0.0.2 - Characters List
 
 ### [Added]
