@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex-center mx-auto w-full md:w-[75%] lg:w-[60%] xl:w-[50%]">
+  <div class="relative flex-center mx-auto w-full h-fit md:my-auto md:max-w-[75%] lg:max-w-[60%] xl:max-w-[50%]">
     <img
       alt=""
       class="absolute w-full h-full z-10"

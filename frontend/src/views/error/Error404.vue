@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex justify-center m-4 sm:m-8 md:items-center h-full">
+  <div class="relative flex-center mx-auto w-fit h-fit md:my-auto">
     <card
       :animated="false"
       class="w-[90%] xs:w-[75%] lg:w-[40%] h-[80%]"

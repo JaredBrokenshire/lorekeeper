@@ -11,6 +11,7 @@
 
 - Updated characters to include a campaign id
 - Updated character response objects to include their user and campaign
+- Changed page layout for all pages so they're all the full height of the screen, updated all to match
 
 ### [Fixed]
 
