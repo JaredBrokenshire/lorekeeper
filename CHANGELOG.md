@@ -6,6 +6,10 @@
 - Added campaign files table with migration
 - Added new campaign files to preloads and campaign response
 
+### [Changed]
+
+- Updated files table to include an author id
+
 ## V0.0.6 - Campaign Details
 
 ### [Added]
