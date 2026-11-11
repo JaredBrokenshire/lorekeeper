@@ -1,7 +1,9 @@
 ## V0.0.7 - Campaign Notes Upload
+
 ### [Added]
 
 - Added user factory
+- Added campaign files table with migration
 
 ## V0.0.6 - Campaign Details
 
