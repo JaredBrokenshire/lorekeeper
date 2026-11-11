@@ -12,6 +12,7 @@
 - Moved CharacterCard to components directory
 - Updated image background layout to allow routes to select image
 - Moved background texture image to assets/pages directory
+- Changed all class logo images
 
 ## V0.0.5 - Local File Storage
 
