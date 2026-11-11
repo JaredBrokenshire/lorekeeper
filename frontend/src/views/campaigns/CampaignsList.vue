@@ -64,14 +64,14 @@
 </template>
 
 <script>
-import debounce from "lodash/debounce";
-import Card from "@/components/Card.vue";
-import HelperService from "@/services/helper.service";
-import CampaignService from "@/services/campaign.service";
-import InputWrapper from "@/components/forms/InputWrapper.vue"
-import CampaignCard from "@/views/campaigns/sections/CampaignCard.vue";
+  import debounce from "lodash/debounce";
+  import Card from "@/components/Card.vue";
+  import HelperService from "@/services/helper.service";
+  import CampaignService from "@/services/campaign.service";
+  import InputWrapper from "@/components/forms/InputWrapper.vue"
+  import CampaignCard from "@/views/campaigns/sections/CampaignCard.vue";
 
-export default {
+  export default {
     name: "CampaignsList",
     components: {Card, InputWrapper, CampaignCard},
     data() {
@@ -107,7 +107,7 @@ export default {
           this.totalCount = res.data.meta.total_count
         } catch (error) {
           let errorText = "Could not get campaigns, please refresh and try again";
-
+          
           if (res && res.data.error) {
             errorText = res.data.error;
           }
