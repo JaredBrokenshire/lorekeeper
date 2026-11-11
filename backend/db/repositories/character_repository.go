@@ -27,7 +27,6 @@ func (r *CharacterRepository) GetCharacters(userID interface{}, page, pageSize i
 		Preload("Classes.Logo").
 		Preload("Subclasses").
 		Preload("Campaign").
-		Preload("User").
 		Preload("ProfilePicture").
 		Scopes(scopes...).
 		Scopes(paginateFunc).

@@ -14,6 +14,10 @@
 - Moved background texture image to assets/pages directory
 - Changed all class logo images
 
+### [Removed]
+
+- Removed preloaded user from characters list endpoint
+
 ## V0.0.5 - Local File Storage
 
 ### [Added]
