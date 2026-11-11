@@ -1,10 +1,12 @@
 package tests
 
 import (
+	"errors"
 	"fmt"
 	"lorekeeper/db/factories"
 	"lorekeeper/db/models"
 	"lorekeeper/tests/helpers"
+	"lorekeeper/tests/mocks"
 	"net/http"
 	"testing"
 )
@@ -12,6 +14,7 @@ import (
 func TestCampaign_List(t *testing.T) {
 	ts.ClearTable("campaigns")
 	ts.ClearTable("characters")
+	ts.ClearTable("files")
 	ts.SetupDefaultUsers()
 
 	campaign := &models.Campaign{}
@@ -168,6 +171,169 @@ func TestCampaign_List(t *testing.T) {
 					fmt.Sprintf(`"location":"%v"`, profilePicture2.Location),
 					fmt.Sprintf(`"name":"%v"`, profilePicture3.Name),
 					fmt.Sprintf(`"location":"%v"`, profilePicture3.Location),
+				},
+			},
+		},
+	}
+
+	for _, test := range cases {
+		t.Run(test.Name, func(t *testing.T) {
+			RunAuthorisedTestCase(t, test)
+		})
+	}
+}
+
+func TestCampaign_Get(t *testing.T) {
+	ts.ClearTable("races")
+	ts.ClearTable("classes")
+	ts.ClearTable("subclasses")
+	ts.ClearTable("campaigns")
+	ts.ClearTable("characters")
+	ts.ClearTable("character_classes")
+	ts.ClearTable("character_subclasses")
+	ts.ClearTable("files")
+	ts.SetupDefaultUsers()
+
+	dmCampaign := &models.Campaign{}
+	factories.NewCampaign(ts.S.DB, dmCampaign)
+	playerCampaign := &models.Campaign{DungeonMasterID: ts.TestUser.ID}
+	factories.NewCampaign(ts.S.DB, playerCampaign)
+	notReturnedCampaign := &models.Campaign{DungeonMasterID: 999}
+	factories.NewCampaign(ts.S.DB, notReturnedCampaign)
+
+	profilePicture := &models.File{}
+	factories.NewFile(ts.S.DB, profilePicture)
+
+	class := &models.Class{}
+	factories.NewClass(ts.S.DB, class)
+
+	subclass := &models.Subclass{ClassID: class.ID}
+	factories.NewSubclass(ts.S.DB, subclass)
+
+	race := &models.Race{}
+	factories.NewRace(ts.S.DB, race)
+
+	character := &models.Character{
+		RaceID:           race.ID,
+		Classes:          []*models.Class{class},
+		Subclasses:       []*models.Subclass{subclass},
+		CampaignID:       playerCampaign.ID,
+		ProfilePictureID: profilePicture.ID,
+	}
+	factories.NewCharacter(ts.S.DB, character)
+
+	getRequest := func(id interface{}) helpers.Request {
+		return helpers.Request{
+			Method: http.MethodGet,
+			Url:    fmt.Sprintf("/campaigns/%v", id),
+		}
+	}
+
+	permissionRequest := getRequest(1)
+	RunNoAuthenticationTests(t, permissionRequest.Method, permissionRequest.Url)
+
+	cases := []helpers.TestCase{
+		{
+			Name:    "Can't get campaign with invalid ID",
+			Request: getRequest("invalid-id"),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusNotFound,
+				BodyParts: []string{
+					"Campaign not found",
+				},
+			},
+		},
+		{
+			Name:    "Can't get campaign that doesn't exist",
+			Request: getRequest(999),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusNotFound,
+				BodyParts: []string{
+					"Campaign not found",
+				},
+			},
+		},
+		{
+			Name:    "Can't get campaign that doesn't belong to the user",
+			Request: getRequest(notReturnedCampaign.ID),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusNotFound,
+				BodyParts: []string{
+					"Campaign not found",
+				},
+			},
+		},
+		{
+			Name:    "Can't get campaign if there is an error from the campaign service",
+			Request: getRequest(dmCampaign.ID),
+			Setup: func(test *helpers.TestCase) {
+				mockCampaignService := mocks.NewMockCampaignService()
+				mockCampaignService.GetError = errors.New("test error")
+
+				ts.S.Dependencies.SetCampaignService(mockCampaignService)
+			},
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusInternalServerError,
+				BodyParts: []string{
+					"There was an error getting the campaign",
+				},
+			},
+			Teardown: func() {
+				ts.S.Dependencies.SetCampaignService(nil)
+			},
+		},
+		{
+			Name:    "Can get campaign where the user is the dungeon master",
+			Request: getRequest(dmCampaign.ID),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusOK,
+				BodyParts: []string{
+					fmt.Sprintf(`"name":"%v"`, dmCampaign.Name),
+
+					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+
+					`"characters":null`,
+				},
+				BodyPartsMissing: []string{
+					fmt.Sprintf(`"username":"%v"`, ts.TestUser.Username),
+
+					fmt.Sprintf(`"name":"%v"`, playerCampaign.Name),
+					fmt.Sprintf(`"name":"%v"`, notReturnedCampaign.Name),
+
+					fmt.Sprintf(`"name":"%v"`, character.Name),
+
+					fmt.Sprintf(`"name":"%v"`, race.Name),
+					fmt.Sprintf(`"name":"%v"`, class.Name),
+					fmt.Sprintf(`"name":"%v"`, subclass.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+				},
+			},
+		},
+		{
+			Name:    "Can get campaign where the user is a player",
+			Request: getRequest(playerCampaign.ID),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusOK,
+				BodyParts: []string{
+					fmt.Sprintf(`"name":"%v"`, playerCampaign.Name),
+
+					fmt.Sprintf(`"username":"%v"`, ts.TestUser.Username),
+					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+
+					fmt.Sprintf(`"name":"%v"`, character.Name),
+
+					fmt.Sprintf(`"name":"%v"`, race.Name),
+					fmt.Sprintf(`"name":"%v"`, class.Name),
+					fmt.Sprintf(`"name":"%v"`, subclass.Name),
+
+					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
+					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+				},
+				BodyPartsMissing: []string{
+					fmt.Sprintf(`"name":"%v"`, dmCampaign.Name),
+					fmt.Sprintf(`"name":"%v"`, notReturnedCampaign.Name),
 				},
 			},
 		},

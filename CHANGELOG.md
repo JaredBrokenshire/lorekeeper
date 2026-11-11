@@ -1,3 +1,14 @@
+## V0.0.6 - Campaign Details
+
+### [Added]
+
+- Added campaign get endpoint with new service and repo methods
+- Added mock campaign service for testing error handling
+
+### [Changed]
+
+- Updated README file tree and endpoint descriptions
+
 ## V0.0.5 - Local File Storage
 
 ### [Added]

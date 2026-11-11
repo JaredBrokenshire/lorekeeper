@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo/v4"
 	"lorekeeper/api"
 	"lorekeeper/api/responses"
+	"lorekeeper/pkg/logging"
+	"lorekeeper/services"
 	"net/http"
 	"strconv"
 )
@@ -50,5 +53,33 @@ func (h *CampaignHandler) List(c echo.Context) error {
 	count := h.server.Dependencies.GetCampaignService().Count(userID, scopes)
 
 	res := responses.NewPaginatedCampaignResponse(campaigns, count, page, pageSize)
+	return responses.Response(c, http.StatusOK, res)
+}
+
+// Get godoc
+// @Summary Get campaign
+// @Description Get a campaign by its ID where the user is either the owner of the campaign or has a character in it
+// @ID campaigns-get
+// @Tags Campaign Actions
+// @Accept json
+// @Produce json
+// @Param id path int true "Campaign ID"
+// @Success 200 {object} responses.CampaignResponse
+// @Router /campaigns/:id [get]
+func (h *CampaignHandler) Get(c echo.Context) error {
+	userID := c.Get("userID").(uint)
+	id := c.Param("id")
+
+	campaign, err := h.server.Dependencies.GetCampaignService().Get(id, userID)
+	switch {
+	case errors.Is(err, services.ErrCampaignNotFound):
+		logging.Logger.LogWarn().Msg("campaign/get campaign not found")
+		return responses.ErrorResponse(c, http.StatusNotFound, "Campaign not found")
+	case err != nil:
+		logging.Logger.LogError().Msg(fmt.Sprintf("campaign/get error: %v", err.Error()))
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "There was an error getting the campaign")
+	}
+
+	res := responses.NewCampaignResponse(campaign)
 	return responses.Response(c, http.StatusOK, res)
 }
