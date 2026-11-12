@@ -1,3 +1,5 @@
+# V1.0.0 - Core Infrastructure
+
 ## V0.0.7 - Campaign Notes Upload
 
 ### [Added]
