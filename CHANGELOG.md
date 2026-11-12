@@ -16,6 +16,10 @@
 - Updated file response to include author as a user response object
 - Updated frontend website name
 
+### [Fixed]
+
+- Fixed server logging
+
 ## V0.0.6 - Campaign Details
 
 ### [Added]
