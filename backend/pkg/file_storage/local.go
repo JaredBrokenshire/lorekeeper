@@ -13,7 +13,7 @@ type FileContext interface {
 }
 
 type LocalStorage struct {
-	storage string
+	Storage string
 }
 
 var folderLocations = []string{"../", "../../"}
@@ -43,16 +43,16 @@ func NewLocalStorage(localStoragePath string) *LocalStorage {
 		}
 	}
 	return &LocalStorage{
-		storage: localStoragePath,
+		Storage: localStoragePath,
 	}
 }
 
 func (s *LocalStorage) Get(c FileContext, path string) error {
-	return c.File(s.storage + path)
+	return c.File(s.Storage + path)
 }
 
 func (s *LocalStorage) ReadFile(path string) ([]byte, error) {
-	fullPath := filepath.Join(s.storage, path)
+	fullPath := filepath.Join(s.Storage, path)
 	res, err := os.ReadFile(fullPath)
 	if err != nil {
 		return nil, err
@@ -62,7 +62,7 @@ func (s *LocalStorage) ReadFile(path string) ([]byte, error) {
 
 func (s *LocalStorage) Save(path string, file io.Reader, filename string) error {
 
-	uploadPath := filepath.Join(s.storage, path)
+	uploadPath := filepath.Join(s.Storage, path)
 	err := os.MkdirAll(uploadPath, 0755)
 	if err != nil {
 		return err
@@ -85,12 +85,12 @@ func (s *LocalStorage) Save(path string, file io.Reader, filename string) error 
 }
 
 func (s *LocalStorage) Delete(path string) error {
-	err := os.Remove(filepath.Join(s.storage, path))
+	err := os.Remove(filepath.Join(s.Storage, path))
 	return err
 }
 
 func (s *LocalStorage) DeleteDir(path string) error {
-	err := os.RemoveAll(filepath.Join(s.storage, path))
+	err := os.RemoveAll(filepath.Join(s.Storage, path))
 	return err
 }
 

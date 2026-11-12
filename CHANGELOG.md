@@ -1,3 +1,9 @@
+## V1.0.1 - PDF Text Extraction
+
+### [Changed]
+
+- Moved file storage tests to new dependency tests package
+
 # V1.0.0 - Core Infrastructure
 
 ## V0.0.7 - Campaign Notes Upload
