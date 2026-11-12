@@ -8,6 +8,7 @@
 - Added file service and repo with mocks and new request method
 - Added campaign file route with new handler and upload file method to campaign service
 - Added seeded campaign files for `Marblethorn` campaign
+- Added modal overlay component
 
 ### [Changed]
 
