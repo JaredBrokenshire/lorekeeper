@@ -23,6 +23,8 @@ func main() {
 	// Load .env when present (ignored in Docker where env vars are injected directly).
 	_ = godotenv.Load()
 
+	logging.NewServerLogger()
+
 	server := api.NewServer()
 	server.Echo.Validator = validation.NewCustomValidator(validator.New())
 	server.Echo.HideBanner = true

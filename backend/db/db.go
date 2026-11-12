@@ -9,11 +9,12 @@ import (
 	"log"
 	"lorekeeper/db/migrations/process"
 	"lorekeeper/db/seeders"
+	"lorekeeper/pkg/file_storage"
 	"lorekeeper/pkg/go-migrations/store"
 	"os"
 )
 
-func Init() (*gorm.DB, error) {
+func Init(fileStore file_storage.Store) (*gorm.DB, error) {
 	driver := os.Getenv("DB_DRIVER")
 	host := os.Getenv("DB_HOST")
 	port := os.Getenv("DB_PORT")
@@ -38,7 +39,7 @@ func Init() (*gorm.DB, error) {
 	sqlxDB := sqlx.NewDb(db.DB(), driver)
 	runMigrations(sqlxDB, driver, process.List())
 
-	seeder := seeders.NewSeeder(db)
+	seeder := seeders.NewSeeder(db, fileStore)
 	seeder.Seed()
 
 	return db, nil
@@ -58,5 +59,19 @@ func runMigrations(db *sqlx.DB, driver string, migrations []store.Migratable) {
 		migration.Up(db)
 		m.AddMigrationRaw(migration.GetName())
 		log.Println("Migrated", migration.GetName())
+	}
+}
+
+func Paginate(page, pageSize int) (int, func(db *gorm.DB) *gorm.DB) {
+	switch {
+	case pageSize > 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 25
+	}
+
+	return pageSize, func(db *gorm.DB) *gorm.DB {
+		offset := page * pageSize
+		return db.Offset(offset).Limit(pageSize)
 	}
 }

@@ -46,7 +46,7 @@ func LoggingMiddleware() echo.MiddlewareFunc {
 				logging.Logger.LogWarn().Fields(logFields).Msg("Request")
 				break
 			case status >= 500:
-				logging.Logger.LogInfo().Fields(logFields).Msg("Request")
+				logging.Logger.LogError().Fields(logFields).Msg("Request")
 				break
 			default:
 				logging.Logger.LogInfo().Fields(logFields).Msg("Request")

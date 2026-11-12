@@ -17,6 +17,7 @@ module.exports = {
       colors: {
         "ink": {
           DEFAULT: "#25180f",
+          "light": "#6a5247",
         },
         "gold": {
           DEFAULT: "#d7ad63",

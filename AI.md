@@ -100,12 +100,23 @@ ChatGPT was used to develop templates and content for documentation of the proje
 throughout development to update the changes in the current branch before creating a PR. Templates for RESEARCH.md,
 AI.MD and the GitHub PR template were also created by ChatGPT.
 
+ChatGPT was also used to write some of the test data for the system. I prompted it to write session notes from 5 
+different players in the same D&D game. I also ensured my first prompt included an instruction to ask any clarifying
+questions before it began writing. After I answered the clarifying questions, it produced an 8-session mini campaign
+from the perspective of 5 players, each with unique note-taking styles. In total 40 PDFs were generated. The notes 
+contain mistakes (misspelled name, misremembered details etc.) and corrections throughout to make them appear more 
+realistic. This is something that would have been tricky to do on my own as I would have struggled to mask my own 
+writing style in the final product.
+
 **My evaluation:**
 
 All documentation edits were reviewed manually and edited, if needed, to ensure a consistency and accuracy throughout.
 AI-Generated documentation tends to be filled with unnecessary examples and definitions and is generally very explicit
 in its writing. This is not inherently a bad thing but a lot of this content needed to be removed as it made the writing
 overly verbose.
+
+The test data was all reviewed manually before I commited to using it in the project. No changes were needed and the
+generated notes could be uploaded to the project.
 
 ---
 

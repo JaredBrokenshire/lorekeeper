@@ -3,6 +3,7 @@ package services
 import (
 	"github.com/jinzhu/gorm"
 	"lorekeeper/db/repositories"
+	"lorekeeper/pkg/file_storage"
 	"os"
 )
 
@@ -11,8 +12,15 @@ type Dependencies struct {
 	repos     *repositories.Repos
 	jwtSecret string
 
-	authService AuthServiceInterface
-	userService UserServiceInterface
+	// File Storage
+	fileStore file_storage.Store
+
+	// Services
+	authService      AuthServiceInterface
+	userService      UserServiceInterface
+	characterService CharacterServiceInterface
+	campaignService  CampaignServiceInterface
+	fileService      FileServiceInterface
 }
 
 func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
@@ -25,6 +33,18 @@ func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
 
 func (d *Dependencies) GetDB() *gorm.DB {
 	return d.db
+}
+
+func (d *Dependencies) GetFileStore() file_storage.Store {
+	if d.fileStore == nil {
+		d.fileStore = file_storage.NewLocalStorage("assets/files")
+	}
+
+	return d.fileStore
+}
+
+func (d *Dependencies) SetFileStore(fileStore file_storage.Store) {
+	d.fileStore = fileStore
 }
 
 func (d *Dependencies) GetAuthService() AuthServiceInterface {
@@ -49,4 +69,44 @@ func (d *Dependencies) GetUserService() UserServiceInterface {
 
 func (d *Dependencies) SetUserService(userService UserServiceInterface) {
 	d.userService = userService
+}
+
+func (d *Dependencies) GetCharacterService() CharacterServiceInterface {
+	if d.characterService == nil {
+		d.characterService = NewCharacterService(d.repos.Character)
+	}
+
+	return d.characterService
+}
+
+func (d *Dependencies) SetCharacterService(characterService CharacterServiceInterface) {
+	d.characterService = characterService
+}
+
+func (d *Dependencies) GetCampaignService() CampaignServiceInterface {
+	if d.campaignService == nil {
+		d.campaignService = NewCampaignService(
+			d.repos.Campaign,
+			d.GetFileService(),
+			d.GetFileStore(),
+		)
+	}
+
+	return d.campaignService
+}
+
+func (d *Dependencies) SetCampaignService(campaignService CampaignServiceInterface) {
+	d.campaignService = campaignService
+}
+
+func (d *Dependencies) GetFileService() FileServiceInterface {
+	if d.fileService == nil {
+		d.fileService = NewFileService(d.repos.File, d.repos.User)
+	}
+
+	return d.fileService
+}
+
+func (d *Dependencies) SetFileService(fileService FileServiceInterface) {
+	d.fileService = fileService
 }

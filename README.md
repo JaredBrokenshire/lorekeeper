@@ -139,21 +139,21 @@ The production build is written to `frontend/dist/`.
 
 ## Technology stack
 
-| Area | Technology |
-|---|---|
-| Frontend | Vue 2.7, Vue Router, Vuex |
-| HTTP client | Axios |
-| Styling | Tailwind CSS |
-| Frontend tooling | Vue CLI, Babel, ESLint |
-| Backend | Go, Echo |
-| Database | MySQL 8 |
-| Database access | GORM (legacy `github.com/jinzhu/gorm`) and sqlx |
-| Database migrations | go-migrations |
-| Authentication | JWT access tokens and HttpOnly refresh-token cookie |
-| Validation | go-playground/validator |
-| API documentation generation | Swaggo |
-| Local environment | Docker, Docker Compose |
-| CI | GitHub Actions |
+| Area                         | Technology                                          |
+|------------------------------|-----------------------------------------------------|
+| Frontend                     | Vue 2.7, Vue Router, Vuex                           |
+| HTTP client                  | Axios                                               |
+| Styling                      | Tailwind CSS                                        |
+| Frontend tooling             | Vue CLI, Babel, ESLint                              |
+| Backend                      | Go, Echo                                            |
+| Database                     | MySQL 8                                             |
+| Database access              | GORM (legacy `github.com/jinzhu/gorm`) and sqlx     |
+| Database migrations          | go-migrations                                       |
+| Authentication               | JWT access tokens and HttpOnly refresh-token cookie |
+| Validation                   | go-playground/validator                             |
+| API documentation generation | Swaggo                                              |
+| Local environment            | Docker, Docker Compose                              |
+| CI                           | GitHub Actions                                      |
 
 ## API
 
@@ -163,67 +163,29 @@ The API is served by the Go Echo application. With the default example configura
 http://api.jb-lorekeeper.com:7788
 ```
 
-All current routes are under `/auth`. JSON request and response bodies are used unless otherwise noted.
-
 ### Authentication endpoints
 
-| Method | Endpoint | Authentication | Description |
-|---|---|---|---|
-| `POST` | `/auth/register` | Public | Register a user |
-| `POST` | `/auth/login` | Public | Log in and obtain an access token |
-| `POST` | `/auth/refresh` | Refresh-token cookie | Exchange a valid refresh token for a new access token |
-| `GET` | `/auth/me` | Access token | Return the authenticated user's details |
-| `POST` | `/auth/logout` | Access token | Clear the refresh-token cookie |
+| Method | Endpoint         | Authentication       | Description                                           |
+|--------|------------------|----------------------|-------------------------------------------------------|
+| `POST` | `/auth/register` | Public               | Register a user                                       |
+| `POST` | `/auth/login`    | Public               | Log in and obtain an access token                     |
+| `POST` | `/auth/refresh`  | Refresh-token cookie | Exchange a valid refresh token for a new access token |
+| `GET`  | `/auth/me`       | Access token         | Return the authenticated user's details               |
+| `POST` | `/auth/logout`   | Access token         | Clear the refresh-token cookie                        |
 
-#### Register
+### Character endpoints
 
-`POST /auth/register`
+| Method | Endpoint        | Query Parameters                                                                                                                                           | Description                                               |
+|--------|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| `GET`  | `/characters`   | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned characters by name | Return a paginated list of the current user's characters. |
 
-```json
-{
-  "username": "adventurer",
-  "email": "adventurer@example.com",
-  "password": "change-me",
-  "confirm_password": "change-me"
-}
-```
+### Campaign endpoints
 
-On success, the API returns an access token and user details. It also sets the `refresh_token` cookie.
-
-#### Login
-
-`POST /auth/login`
-
-```json
-{
-  "username": "adventurer",
-  "password": "change-me"
-}
-```
-
-On success, the response contains an `access_token` and `user` object. The refresh token is set as an HttpOnly cookie.
-
-#### Refresh access token
-
-`POST /auth/refresh`
-
-The refresh token is read from the `refresh_token` cookie. The request does not require a JSON body. The response contains a new access token and user details, and refreshes the cookie.
-
-#### Get the current user
-
-`GET /auth/me`
-
-Send the access token in the request header:
-
-```text
-Authorization: Bearer <access_token>
-```
-
-#### Logout
-
-`POST /auth/logout`
-
-Send the access token in the request header. The API expires the refresh-token cookie.
+| Method | Endpoint               | Path Parameters        | Query Parameters / Request Body                                                                                                                           | Description                                              |
+|--------|------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| `GET`  | `/campaigns`           |                        | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned campaigns by name | Return a paginated list of the current user's campaigns. | 
+| `GET`  | `/campaigns/:id`       | - id = The campaign id |                                                                                                                                                           | Return a campaign.                                       | 
+| `GET`  | `/campaigns/:id/files` | - id = The campaign id | - file = Multipart form, new session notes file                                                                                                           | Create a new campaign session notes file                 | 
 
 ### Authentication notes
 
@@ -242,7 +204,12 @@ Campaign, document, search and question-answering endpoints will be documented h
 
 Backend tests are located in `backend/tests/`.
 
-The test server uses a MySQL database configured through the test environment variables. Start a suitable MySQL instance and provide the test database settings before running the suite.
+The test server uses a MySQL database configured through the test environment variables and running in the docker compose stack.
+Start the test database docker container:
+
+```bash
+docker compose -f ./docker-compose-test.yml up --build -d
+```
 
 From the `backend` directory:
 
@@ -286,20 +253,29 @@ The GitHub Actions workflow at `.github/workflows/ci.yml` runs on pull requests 
 │   └── workflows/       # GitHub Actions CI
 ├── backend/
 │   ├── api/              # Echo server, handlers, requests, responses and routes
+│   ├── assets/           # Local storage target directory
 │   ├── cmd/api/          # API application entry point
 │   ├── config/           # Backend configuration
 │   ├── db/
+│   │   ├── factories/    # Model factories
 │   │   ├── migrations/   # Database migrations
 │   │   ├── models/       # GORM models
 │   │   ├── repositories/ # Database repositories
 │   │   └── seeders/      # Initial/reference data
+│   │       └── assets/   # Seeded assets
+│   ├── docker/           # Backend Dockerfile
+│   ├── pkg/              # Imported packages
 │   ├── services/         # Application/business logic
-│   ├── tests/            # Backend integration tests and test helpers
-│   └── docker/           # Backend Dockerfile
+│   └── tests/            # Backend integration tests and test helpers
+│       ├── helpers/      # Test helper methods
+│       └── mocks/        # Service mocks
 ├── frontend/
 │   └── src/
 │       ├── @core/        # Shared frontend utilities and components
+│       ├── assets/       # Asset files (images, css etc.)
 │       ├── components/   # Reusable Vue components
+│       ├── layouts/      # Reusable Vue layouts
+│       ├── libs/         # Imported libraries
 │       ├── router/       # Vue Router configuration
 │       ├── services/     # Axios API client and frontend services
 │       ├── store/        # Vuex store and modules

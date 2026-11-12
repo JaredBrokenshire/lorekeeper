@@ -3,6 +3,8 @@ import store from "@/store";
 import Router from 'vue-router';
 import authRoutes from '@/router/routes/auth';
 import AuthService from "@/services/auth.service";
+import campaignRoutes from '@/router/routes/campaign';
+import characterRoutes from '@/router/routes/character';
 
 Vue.use(Router);
 
@@ -19,6 +21,8 @@ const router = new Router({
       }
     },
     ...authRoutes,
+    ...characterRoutes,
+    ...campaignRoutes,
     {
       path: '/404',
       name: 'error-404-page',

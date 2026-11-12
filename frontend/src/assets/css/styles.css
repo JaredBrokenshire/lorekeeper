@@ -17,7 +17,7 @@
 .transition-all { transition: all .2s ease-in-out; }
 
 .bg-texture {
-    @apply bg-[url("@/assets/images/background-texture.png")] bg-contain p-4 md:p-8 text-ink
+    @apply bg-[url("@/assets/images/pages/background-texture.png")] bg-contain p-4 md:p-8 text-ink
 }
 
 pre {
@@ -52,4 +52,17 @@ p {
 .validation-provider small {
     @apply absolute;
     bottom: calc(-1.5rem * 1lh)
+}
+
+/* TABLE STYLES */
+table {
+    @apply w-full text-left border-2 border-ember;
+}
+
+tr {
+  @apply even:bg-gold-light transition-all hover:bg-gold;
+}
+
+td, th {
+    @apply border border-ember-light px-4 py-2;
 }
