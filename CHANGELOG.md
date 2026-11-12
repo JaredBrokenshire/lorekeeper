@@ -3,6 +3,7 @@
 ### [Added]
 
 - Added preliminary notes into research.md about pdf text extraction
+- Added document service with method to extract text from PDFs
 
 ### [Changed]
 
