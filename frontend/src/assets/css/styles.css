@@ -53,3 +53,16 @@ p {
     @apply absolute;
     bottom: calc(-1.5rem * 1lh)
 }
+
+/* TABLE STYLES */
+table {
+    @apply w-full text-left border-2 border-ember;
+}
+
+tr {
+  @apply even:bg-gold-light transition-all hover:bg-gold;
+}
+
+td, th {
+    @apply border border-ember-light px-4 py-2;
+}
