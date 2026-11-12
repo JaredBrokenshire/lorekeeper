@@ -1,3 +1,18 @@
+## V1.0.1 - PDF Text Extraction
+
+### [Added]
+
+- Added preliminary notes into research.md about pdf text extraction
+- Added document service with method to extract text from PDFs
+
+### [Changed]
+
+- Moved file storage tests to new dependency tests package
+
+### [Fixed]
+
+- Fixed local file storage error handling so it's no longer dependent on operating system
+
 # V1.0.0 - Core Infrastructure
 
 ## V0.0.7 - Campaign Notes Upload
