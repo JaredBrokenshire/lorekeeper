@@ -22,24 +22,26 @@ Zotero was used for reference management throughout the development process.
 
 ## 2. Research Log
 
-### Research Topic: [Topic Name]
+### Research Topic: Go PDF Extraction
 
-**Date:** [DD/MM/YYYY]
+**Date:** 12/11/2026
 
 **What did I need to learn?**
 
-[Describe the concept, technology or problem you needed to understand.]
+I need to either develop or find a tool that can take a PDF file and extract the text from each page along with its 
+corresponding page number.
 
 **Why did I need to learn this?**
 
-[Explain how this relates to Lorekeeper and why understanding it was important.]
+This is part of the session note extraction to be later used with text chunking in order to search for key terms in
+campaign notes.
 
 **Where did I research this?**
 
-| Source                               | Link  | Why I used it                  |
-|--------------------------------------|-------|--------------------------------|
-| [Documentation / Article / Tutorial] | [URL] | [Reason for using this source] |
-| [Additional source]                  | [URL] | [Reason for using this source] |
+| Source       | Link                                                             | Why I used it                                                                                                                                                                                                                                       |
+|--------------|------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| pdftotext-go | https://pkg.go.dev/github.com/heussd/pdftotext-go#section-readme | This was the first response from my search, ultimately not helpful as it required a package that I did not understand how to use. I read through the documentation of the required package and didn't understand its purpose or setup instructions. |
+| pdf          | https://github.com/ledongthuc/pdf                                | Came across this GitHub repo after doing some reading on PDF displays                                                                                                                                                                               |
 
 **What did I discover?**
 

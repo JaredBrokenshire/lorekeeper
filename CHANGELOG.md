@@ -1,5 +1,9 @@
 ## V1.0.1 - PDF Text Extraction
 
+### [Added]
+
+- Added preliminary notes into research.md about pdf text extraction
+
 ### [Changed]
 
 - Moved file storage tests to new dependency tests package
