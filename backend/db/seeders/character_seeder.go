@@ -27,7 +27,7 @@ func (s *Seeder) SetCharacters() {
 		{
 			character: models.Character{
 				ID:         2,
-				UserID:     1, // JBrokenshire (admin)
+				UserID:     2, // TestUser
 				Name:       "Faelan",
 				Level:      10,
 				RaceID:     7, // Halfling

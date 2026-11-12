@@ -27,6 +27,7 @@ func (s *Seeder) Seed() {
 	s.SetClassLogos()
 	s.SetSubclasses()
 	s.SetCampaigns()
+	s.SetCampaignSessionNotes()
 	s.SetCharacters()
 	s.SetCharacterProfilePictures()
 }

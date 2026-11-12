@@ -32,7 +32,7 @@ func (s *Seeder) SetCharacterProfilePictures() {
 	}
 
 	for _, character := range characters {
-		// Skip if this class already has a logo.
+		// Skip if this character already has a profile picture.
 		if character.ProfilePictureID != 0 {
 			continue
 		}
