@@ -11,6 +11,7 @@ type Repos struct {
 	Role      *RoleRepository
 	Character *CharacterRepository
 	Campaign  *CampaignRepository
+	File      *FileRepository
 }
 
 func NewRepos(db *gorm.DB) *Repos {
@@ -21,5 +22,6 @@ func NewRepos(db *gorm.DB) *Repos {
 		Role:      NewRoleRepository(db),
 		Character: NewCharacterRepository(db),
 		Campaign:  NewCampaignRepository(db),
+		File:      NewFileRepository(db),
 	}
 }

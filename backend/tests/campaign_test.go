@@ -188,15 +188,24 @@ func TestCampaign_Get(t *testing.T) {
 	ts.ClearTable("classes")
 	ts.ClearTable("subclasses")
 	ts.ClearTable("campaigns")
+	ts.ClearTable("campaign_files")
 	ts.ClearTable("characters")
 	ts.ClearTable("character_classes")
 	ts.ClearTable("character_subclasses")
 	ts.ClearTable("files")
 	ts.SetupDefaultUsers()
 
-	dmCampaign := &models.Campaign{}
+	author := &models.User{}
+	factories.NewUser(ts.S.DB, author)
+
+	sessionNote := &models.File{AuthorID: author.ID}
+	factories.NewFile(ts.S.DB, sessionNote)
+	sessionNote2 := &models.File{AuthorID: author.ID}
+	factories.NewFile(ts.S.DB, sessionNote2)
+
+	dmCampaign := &models.Campaign{DungeonMasterID: ts.AdminUser.ID, Files: []*models.File{sessionNote}}
 	factories.NewCampaign(ts.S.DB, dmCampaign)
-	playerCampaign := &models.Campaign{DungeonMasterID: ts.TestUser.ID}
+	playerCampaign := &models.Campaign{DungeonMasterID: ts.TestUser.ID, Files: []*models.File{sessionNote2}}
 	factories.NewCampaign(ts.S.DB, playerCampaign)
 	notReturnedCampaign := &models.Campaign{DungeonMasterID: 999}
 	factories.NewCampaign(ts.S.DB, notReturnedCampaign)
@@ -294,6 +303,10 @@ func TestCampaign_Get(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, dmCampaign.Name),
 
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+					fmt.Sprintf(`"username":"%v"`, author.Username),
+
+					fmt.Sprintf(`"name":"%v"`, sessionNote.Name),
+					fmt.Sprintf(`"location":"%v"`, sessionNote.Location),
 
 					`"characters":null`,
 				},
@@ -314,6 +327,9 @@ func TestCampaign_Get(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
 					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+
+					fmt.Sprintf(`"name":"%v"`, sessionNote2.Name),
+					fmt.Sprintf(`"location":"%v"`, sessionNote2.Location),
 				},
 			},
 		},
@@ -327,6 +343,7 @@ func TestCampaign_Get(t *testing.T) {
 
 					fmt.Sprintf(`"username":"%v"`, ts.TestUser.Username),
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
+					fmt.Sprintf(`"username":"%v"`, author.Username),
 
 					fmt.Sprintf(`"name":"%v"`, character.Name),
 
@@ -336,10 +353,16 @@ func TestCampaign_Get(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, profilePicture.Name),
 					fmt.Sprintf(`"location":"%v"`, profilePicture.Location),
+
+					fmt.Sprintf(`"name":"%v"`, sessionNote2.Name),
+					fmt.Sprintf(`"location":"%v"`, sessionNote2.Location),
 				},
 				BodyPartsMissing: []string{
 					fmt.Sprintf(`"name":"%v"`, dmCampaign.Name),
 					fmt.Sprintf(`"name":"%v"`, notReturnedCampaign.Name),
+
+					fmt.Sprintf(`"name":"%v"`, sessionNote.Name),
+					fmt.Sprintf(`"location":"%v"`, sessionNote.Location),
 				},
 			},
 		},

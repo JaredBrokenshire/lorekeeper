@@ -181,10 +181,11 @@ http://api.jb-lorekeeper.com:7788
 
 ### Campaign endpoints
 
-| Method | Endpoint         | Path Parameters        | Query Parameters                                                                                                                                          | Description                                              |
-|--------|------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
-| `GET`  | `/campaigns`     |                        | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned campaigns by name | Return a paginated list of the current user's campaigns. | 
-| `GET`  | `/campaigns/:id` | - id = The campaign id |                                                                                                                                                           | Return a campaign.                                       | 
+| Method | Endpoint               | Path Parameters        | Query Parameters / Request Body                                                                                                                           | Description                                              |
+|--------|------------------------|------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| `GET`  | `/campaigns`           |                        | - page = The page number to return (0-indexed)<br/>- page_size = The number of items to return per page<br/>- search = Filters returned campaigns by name | Return a paginated list of the current user's campaigns. | 
+| `GET`  | `/campaigns/:id`       | - id = The campaign id |                                                                                                                                                           | Return a campaign.                                       | 
+| `GET`  | `/campaigns/:id/files` | - id = The campaign id | - file = Multipart form, new session notes file                                                                                                           | Create a new campaign session notes file                 | 
 
 ### Authentication notes
 

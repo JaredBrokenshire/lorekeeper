@@ -22,4 +22,7 @@ func fillFileDefaults(file *models.File) {
 	if file.Location == "" {
 		file.Location = fmt.Sprintf("%v/%v/%v.png", random.String(16), random.String(16), random.String(16))
 	}
+	if file.AuthorID == 0 {
+		file.AuthorID = 1
+	}
 }

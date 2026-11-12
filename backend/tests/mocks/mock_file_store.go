@@ -5,7 +5,7 @@ import (
 	"lorekeeper/pkg/file_storage"
 )
 
-type FileStoreMock struct {
+type MockFileStore struct {
 	GetCalls []string
 	GetError error
 
@@ -23,38 +23,38 @@ type FileStoreMock struct {
 	DeleteDirError error
 }
 
-func NewFileStoreMock() *FileStoreMock {
-	m := FileStoreMock{}
+func NewMockFileStore() *MockFileStore {
+	m := MockFileStore{}
 	m.Reset()
 	return &m
 }
 
-func (m *FileStoreMock) Get(_ file_storage.FileContext, file string) error {
+func (m *MockFileStore) Get(_ file_storage.FileContext, file string) error {
 	m.GetCalls = append(m.GetCalls, file)
 	return m.GetError
 }
 
-func (m *FileStoreMock) ReadFile(path string) ([]byte, error) {
+func (m *MockFileStore) ReadFile(path string) ([]byte, error) {
 	m.ReadFileCalls = append(m.ReadFileCalls, path)
 	return m.ReadFileResponse, m.ReadFileError
 }
 
-func (m *FileStoreMock) Save(path string, _ io.Reader, fileName string) error {
+func (m *MockFileStore) Save(path string, _ io.Reader, fileName string) error {
 	m.SaveCalls = append(m.SaveCalls, struct{ Path, FileName string }{path, fileName})
 	return m.SaveError
 }
 
-func (m *FileStoreMock) Delete(path string) error {
+func (m *MockFileStore) Delete(path string) error {
 	m.DeleteCalls = append(m.DeleteCalls, path)
 	return m.DeleteError
 }
 
-func (m *FileStoreMock) DeleteDir(path string) error {
+func (m *MockFileStore) DeleteDir(path string) error {
 	m.DeleteDirCalls = append(m.DeleteDirCalls, path)
 	return m.DeleteDirError
 }
 
-func (m *FileStoreMock) Reset() {
+func (m *MockFileStore) Reset() {
 	m.GetCalls = []string{}
 	m.GetError = nil
 

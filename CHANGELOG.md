@@ -1,3 +1,28 @@
+## V0.0.7 - Campaign Notes Upload
+
+### [Added]
+
+- Added user factory
+- Added campaign files table with migration
+- Added new campaign files to preloads and campaign response
+- Added file service and repo with mocks and new request method
+- Added campaign file route with new handler and upload file method to campaign service
+- Added seeded campaign files for `Marblethorn` campaign
+- Added modal overlay component
+- Added session notes display to campaign details page
+- Added new upload session notes modal
+
+### [Changed]
+
+- Updated files table to include an author id
+- Updated file response to include author as a user response object
+- Updated frontend website name
+- Updated input wrapper to work with file input
+
+### [Fixed]
+
+- Fixed server logging
+
 ## V0.0.6 - Campaign Details
 
 ### [Added]

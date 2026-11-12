@@ -10,17 +10,33 @@
 
     <div class="input-wrapper">
       <input
+        v-if="type === 'file'"
         :id="name"
+        :accept="validationRules?.accept"
         :autocomplete="$attrs.autocomplete || 'off'"
+        :disabled="validationRules?.disabled"
+        :multiple="validationRules?.multiple"
         :name="name"
         :placeholder="placeholder"
+        :required="validationRules?.required"
         :type="type"
-        :value="value"
-        v-bind="{
-          ...$attrs,
-          autocomplete: undefined
-        }"
-        @input="$emit('input', $event.target.value)"
+        v-bind="$attrs"
+        @change="handleInput"
+      >
+
+      <input
+        v-else
+        :id="name"
+        :accept="validationRules?.accept"
+        :autocomplete="$attrs.autocomplete || 'off'"
+        :disabled="validationRules?.disabled"
+        :multiple="validationRules?.multiple"
+        :name="name"
+        :placeholder="placeholder"
+        :required="validationRules?.required"
+        :type="type"
+        v-bind="$attrs"
+        @input="handleInput"
       >
 
       <div class="relative z-20">
@@ -56,7 +72,7 @@
         default: "text"
       },
       value: {
-        type: [String, Number],
+        type: [String, Number, File],
         default: '',
       },
       placeholder: {
@@ -73,7 +89,38 @@
       },
       validationRules: {
         type: Object,
-        default: null,
+        default: () => ({}),
+      }
+    },
+    methods: {
+      handleInput(event) {
+        if (this.type === 'file') {
+          const files = Array.from(event.target.files)
+          const maxSize = this.validationRules.maxSize
+
+          if (maxSize && files.some(file => file.size > maxSize)) {
+            this.$emit('validation-error', 'File exceeds maximum allowed size.')
+            event.target.value = ''
+            return
+          }
+
+          if (this.validationRules.accept) {
+            const acceptedTypes = this.validationRules.accept.split(',').map(type => type.trim())
+            const invalidFiles = files.filter(file => !acceptedTypes.includes(file.type))
+
+            if (invalidFiles.length > 0) {
+              this.$emit('validation-error', 'Invalid file type. Only the following file types are allowed: ' + acceptedTypes.join(', '))
+              event.target.value = ''
+              return
+            }
+          }
+
+          const value = this.validationRules.multiple ? files : files[0] || null
+          this.$emit('input', value)
+          return
+        }
+
+        this.$emit('input', event.target.value)
       }
     }
   }
@@ -96,10 +143,19 @@
   @apply transition-all;
 }
 
-.input-wrapper:focus-within .input-decoration polygon {
+.input-wrapper:focus-within .input-decoration polygon,
+.input-wrapper:hover .input-decoration polygon {
   fill: #FFFFFFDB;
 }
 .input-wrapper:focus-within .input-decoration path {
   @apply fill-ember-light
+}
+
+.input-wrapper input[type="file"] {
+  @apply flex items-center gap-4 h-[3rem] py-0 cursor-pointer;
+}
+
+.input-wrapper input[type="file"]::file-selector-button {
+  @apply my-[.5rem] h-[2rem] me-3 px-3 bg-gold transition-all cursor-pointer rounded text-ink;
 }
 </style>

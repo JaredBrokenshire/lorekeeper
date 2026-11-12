@@ -20,6 +20,7 @@ type Dependencies struct {
 	userService      UserServiceInterface
 	characterService CharacterServiceInterface
 	campaignService  CampaignServiceInterface
+	fileService      FileServiceInterface
 }
 
 func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
@@ -84,7 +85,11 @@ func (d *Dependencies) SetCharacterService(characterService CharacterServiceInte
 
 func (d *Dependencies) GetCampaignService() CampaignServiceInterface {
 	if d.campaignService == nil {
-		d.campaignService = NewCampaignService(d.repos.Campaign)
+		d.campaignService = NewCampaignService(
+			d.repos.Campaign,
+			d.GetFileService(),
+			d.GetFileStore(),
+		)
 	}
 
 	return d.campaignService
@@ -92,4 +97,16 @@ func (d *Dependencies) GetCampaignService() CampaignServiceInterface {
 
 func (d *Dependencies) SetCampaignService(campaignService CampaignServiceInterface) {
 	d.campaignService = campaignService
+}
+
+func (d *Dependencies) GetFileService() FileServiceInterface {
+	if d.fileService == nil {
+		d.fileService = NewFileService(d.repos.File, d.repos.User)
+	}
+
+	return d.fileService
+}
+
+func (d *Dependencies) SetFileService(fileService FileServiceInterface) {
+	d.fileService = fileService
 }

@@ -7,6 +7,9 @@ type File struct {
 	Location string
 	Name     string
 
+	AuthorID uint
+	Author   *User `gorm:"foreignkey:AuthorID"`
+
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt *time.Time
