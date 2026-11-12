@@ -5,6 +5,7 @@
 - Added user factory
 - Added campaign files table with migration
 - Added new campaign files to preloads and campaign response
+- Added file service and repo with mocks and new request method
 
 ### [Changed]
 

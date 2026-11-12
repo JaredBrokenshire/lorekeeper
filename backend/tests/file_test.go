@@ -11,7 +11,7 @@ import (
 )
 
 func TestFile_Get(t *testing.T) {
-	fileStoreMock := mocks.NewFileStoreMock()
+	fileStoreMock := mocks.NewMockFileStore()
 	ts.S.Dependencies.SetFileStore(fileStoreMock)
 
 	request := helpers.Request{
