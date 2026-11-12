@@ -10,6 +10,7 @@
 - Added seeded campaign files for `Marblethorn` campaign
 - Added modal overlay component
 - Added session notes display to campaign details page
+- Added new upload session notes modal
 
 ### [Changed]
 
