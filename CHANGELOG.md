@@ -15,6 +15,7 @@
 - Updated files table to include an author id
 - Updated file response to include author as a user response object
 - Updated frontend website name
+- Updated input wrapper to work with file input
 
 ### [Fixed]
 
