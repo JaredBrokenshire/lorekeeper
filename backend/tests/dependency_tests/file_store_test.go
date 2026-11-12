@@ -115,7 +115,6 @@ func TestSaveDirectoryNotExist(t *testing.T) {
 	// Confirm directory does not already exist
 	_, err := os.Stat(dir)
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the file specified")
 
 	// Save file to directory
 	src, err := os.OpenFile("../../assets/test.jpeg", os.O_RDWR, 0755)
@@ -171,7 +170,6 @@ func TestDelete(t *testing.T) {
 	// Check file no longer exists
 	_, err = os.Stat(localStorage.Storage + "delete-example.txt")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the file specified")
 }
 
 func TestDeleteFileNotExist(t *testing.T) {
@@ -179,7 +177,7 @@ func TestDeleteFileNotExist(t *testing.T) {
 
 	err := localStorage.Delete("does-not-exist.txt")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the file specified")
+	assert.Equal(t, fs.ErrFileDelete, err, "Expected error to match")
 }
 
 func TestDeleteFileFolderNotExist(t *testing.T) {
@@ -187,7 +185,7 @@ func TestDeleteFileFolderNotExist(t *testing.T) {
 
 	err := localStorage.Delete("no-folder/does-not-exist.txt")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the path specified")
+	assert.Error(t, fs.ErrFileDelete, err, "Expected error to match")
 }
 
 func TestDeleteDirectory(t *testing.T) {
@@ -199,7 +197,7 @@ func TestDeleteDirectory(t *testing.T) {
 	// Attempt to delete whole directory
 	err := localStorage.Delete("test-directory/")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "directory is not empty")
+	assert.Equal(t, fs.ErrFileDelete, err, "Expected error to match")
 
 	// Check file still exists
 	_, err = os.Stat(localStorage.Storage + "test-directory/example.txt")
@@ -213,36 +211,31 @@ func TestReadFile(t *testing.T) {
 		Name                 string
 		Path                 string
 		ExpectedOutput       []byte
-		ExpectedErrorMessage string
+		ExpectedErrorMessage error
 	}{
 		{
-			Name:                 "Can read file",
-			Path:                 "test.txt",
-			ExpectedOutput:       []byte("This is a test file"),
-			ExpectedErrorMessage: "",
+			Name:           "Can read file",
+			Path:           "test.txt",
+			ExpectedOutput: []byte("This is a test file"),
 		},
 		{
 			Name:                 "Cannot read file that does not exist",
 			Path:                 "does-not-exist.txt",
 			ExpectedOutput:       nil,
-			ExpectedErrorMessage: "The system cannot find the file specified",
+			ExpectedErrorMessage: fs.ErrFileRead,
 		},
 		{
 			Name:                 "Cannot read directory",
 			Path:                 "files",
 			ExpectedOutput:       nil,
-			ExpectedErrorMessage: "Incorrect function",
+			ExpectedErrorMessage: fs.ErrFileRead,
 		},
 	}
 
 	for _, test := range testCases {
 		t.Run(test.Name, func(t *testing.T) {
 			res, err := localStorage.ReadFile(test.Path)
-			if test.ExpectedErrorMessage == "" {
-				assert.NoError(t, err, "Expected no error")
-			} else {
-				assert.ErrorContains(t, err, test.ExpectedErrorMessage, "Expected error to contain message")
-			}
+			assert.Equal(t, test.ExpectedErrorMessage, err, "Expected error to match")
 			assert.Equal(t, test.ExpectedOutput, res, "Expected output to match")
 		})
 	}

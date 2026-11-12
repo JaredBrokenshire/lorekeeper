@@ -9,6 +9,10 @@
 
 - Moved file storage tests to new dependency tests package
 
+### [Fixed]
+
+- Fixed local file storage error handling so it's no longer dependent on operating system
+
 # V1.0.0 - Core Infrastructure
 
 ## V0.0.7 - Campaign Notes Upload
