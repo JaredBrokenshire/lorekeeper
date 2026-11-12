@@ -85,7 +85,11 @@ func (d *Dependencies) SetCharacterService(characterService CharacterServiceInte
 
 func (d *Dependencies) GetCampaignService() CampaignServiceInterface {
 	if d.campaignService == nil {
-		d.campaignService = NewCampaignService(d.repos.Campaign)
+		d.campaignService = NewCampaignService(
+			d.repos.Campaign,
+			d.GetFileService(),
+			d.GetFileStore(),
+		)
 	}
 
 	return d.campaignService

@@ -188,6 +188,7 @@ func TestCampaign_Get(t *testing.T) {
 	ts.ClearTable("classes")
 	ts.ClearTable("subclasses")
 	ts.ClearTable("campaigns")
+	ts.ClearTable("campaign_files")
 	ts.ClearTable("characters")
 	ts.ClearTable("character_classes")
 	ts.ClearTable("character_subclasses")
