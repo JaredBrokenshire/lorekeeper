@@ -48,10 +48,15 @@ type CreateFileDTO struct {
 }
 
 func (s *FileService) Create(dto CreateFileDTO) (*models.File, error) {
+	user := s.userRepo.GetById(dto.AuthorID)
+	if user == nil {
+		return nil, ErrUserNotFound
+	}
+
 	fileModel := models.File{
 		Name:     dto.Name,
 		Location: dto.Location,
-		AuthorID: dto.AuthorID,
+		Author:   user,
 	}
 
 	err := s.fileRepo.Create(&fileModel)
