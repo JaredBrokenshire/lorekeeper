@@ -7,6 +7,10 @@
 - Added chunking to campaign session notes seeder
 - Added chunks display to frontend session notes table
 
+### [Fixed]
+
+- Fixed GitHub ci workflow to run all tests
+
 ### [Removed]
 
 - Removed testing main file
