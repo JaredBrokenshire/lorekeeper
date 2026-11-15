@@ -63,20 +63,22 @@
         <tr class="hover:bg-transparent">
           <th class="w-[35%]">Name</th>
           <th class="w-[35%]">Author</th>
-          <th class="w-[15%]">Date</th>
+          <th class="w-[10%]">Date</th>
+          <th class="w-[10%]">Chunks</th>
           <th class="w-[10%]" />
         </tr>
         <tr
-          v-for="(file, index) in campaign.session_notes"
-          :key="`campaign-${campaign.id}-session-note-${index}`"
+          v-for="sessionNote in campaign.session_notes"
+          :key="`campaign-${campaign.id}-session-note-${sessionNote.id}`"
           class="group"
         >
-          <td>{{ file.name }}</td>
-          <td>{{ file.author?.username }}</td>
-          <td>{{ new Date(file.created_at).toLocaleDateString() }}</td>
+          <td>{{ sessionNote.file.name }}</td>
+          <td>{{ sessionNote.file.author?.username }}</td>
+          <td>{{ new Date(sessionNote.file.created_at).toLocaleDateString() }}</td>
+          <td>{{ sessionNote.chunks.length }}</td>
           <td class="cursor-pointer">
             <router-link
-              :to="`/campaigns/${campaign.id}/notes/${file.id}`"
+              :to="`/campaigns/${campaign.id}/notes/${sessionNote.file.id}`"
               class="text-ember text-center transition-all font-normal group-hover:font-bold"
             >
               <h4>View</h4>
