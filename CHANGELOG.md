@@ -4,6 +4,7 @@
 
 - Added document chunking package with new dependency tests
 - Created document chunks table and updated campaign file endpoints to use it
+- Added chunking to campaign session notes seeder
 
 ## V1.0.1 - PDF Text Extraction
 

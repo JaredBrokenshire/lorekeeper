@@ -3,7 +3,7 @@ package seeders
 import (
 	"bytes"
 	"fmt"
-	"github.com/jinzhu/gorm"
+	"github.com/ledongthuc/pdf"
 	"lorekeeper/db/models"
 	"lorekeeper/pkg/logging"
 	"os"
@@ -32,7 +32,7 @@ func (s *Seeder) SetCampaignSessionNotes() {
 	}
 
 	var campaigns []models.Campaign
-	if err := s.DB.Preload("Files").Find(&campaigns).Error; err != nil {
+	if err := s.DB.Preload("Files").Preload("Files.File").Find(&campaigns).Error; err != nil {
 		logging.Logger.LogWarn().Msg(fmt.Sprintf("Seeder: SetCampaignSessionNotes could not load campaigns: %v", err))
 		return
 	}
@@ -49,7 +49,6 @@ func (s *Seeder) SetCampaignSessionNotes() {
 		}
 
 		campaignDir := filepath.Join(assetDir, fmt.Sprintf("%v", campaign.ID), "session-notes")
-
 		entries, err := os.ReadDir(campaignDir)
 		if err != nil {
 			logging.Logger.LogInfo().Msg(fmt.Sprintf("Seeder: no session notes found for campaign %v - skipping", campaign.ID))
@@ -95,24 +94,63 @@ func (s *Seeder) SetCampaignSessionNotes() {
 				continue
 			}
 
-			file := models.File{
+			file := &models.File{
 				Name:     newFileName,
 				Location: fmt.Sprintf("%v/%v", storagePath, newFileName),
 				AuthorID: authorID,
 			}
-
-			// Create the file and associate it with the campaign.
-			err = s.DB.Transaction(func(tx *gorm.DB) error {
-				if err := tx.Create(&file).Error; err != nil {
-					return err
-				}
-
-				return tx.Model(&campaign).Association("Files").Append(&file).Error
-			})
-
+			campaignFile := &models.CampaignFile{
+				CampaignID: campaign.ID,
+				File:       file,
+			}
+			err = s.DB.Create(campaignFile).Error
 			if err != nil {
 				logging.Logger.LogWarn().Msg(fmt.Sprintf("Seeder: error creating session note %q for campaign %v: %v", entry.Name(), campaign.ID, err))
 				continue
+			}
+
+			osFile, reader, err := pdf.Open(filepath.Join("assets/files", file.Location))
+			if err != nil {
+				logging.Logger.LogWarn().Msg(fmt.Sprintf("Seeder: error opening file for campaign %v: %v", campaign.ID, err))
+			}
+			defer osFile.Close()
+
+			pages, err := s.Extractor.Extract(reader)
+			if err != nil {
+				logging.Logger.LogWarn().Msg(fmt.Sprintf("Seeder: error extracting page content from session notes for campaign %v: %v", campaign.ID, err))
+				continue
+			}
+
+			chunks, err := s.Extractor.Chunk(pages)
+			if err != nil {
+				logging.Logger.LogWarn().Msg(fmt.Sprintf("Seeder: error chunking page content from session notes for campaign %v: %v", campaign.ID, err))
+				continue
+			}
+
+			for _, chunk := range chunks {
+				var existing models.DocumentChunk
+				s.DB.
+					Where("campaign_file_id = ?", campaignFile.ID).
+					Where("page_number = ?", chunk.PageNumber).
+					Where("chunk_index = ?", chunk.Index).
+					Where("content = ?", chunk.Content).
+					First(&existing)
+
+				if existing.ID != 0 {
+					continue
+				}
+
+				documentChunk := &models.DocumentChunk{
+					CampaignFileID: campaignFile.ID,
+					PageNumber:     chunk.PageNumber,
+					Index:          chunk.Index,
+					Content:        chunk.Content,
+				}
+				err := s.DB.Create(&documentChunk).Error
+				if err != nil {
+					logging.Logger.LogWarn().Msg(fmt.Sprintf("Error creating document chunk with content `%v` for campaign `%v` in seeder", chunk.Content, campaign.ID))
+					continue
+				}
 			}
 		}
 	}
