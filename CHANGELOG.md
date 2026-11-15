@@ -1,3 +1,9 @@
+## V1.0.3 - BM25 Search
+
+### [Added]
+
+- Added indexes for document chunks table
+
 ## V1.0.2 - Text Chunking
 
 ### [Added]
