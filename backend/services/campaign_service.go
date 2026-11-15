@@ -28,15 +28,17 @@ var (
 type CampaignService struct {
 	campaignRepo *repositories.CampaignRepository
 
-	fileService FileServiceInterface
-	fileStore   file_storage.Store
+	fileService     FileServiceInterface
+	fileStore       file_storage.Store
+	documentService DocumentServiceInterface
 }
 
-func NewCampaignService(campaignRepo *repositories.CampaignRepository, fileService FileServiceInterface, fileStore file_storage.Store) *CampaignService {
+func NewCampaignService(campaignRepo *repositories.CampaignRepository, fileService FileServiceInterface, fileStore file_storage.Store, documentService DocumentServiceInterface) *CampaignService {
 	return &CampaignService{
-		campaignRepo: campaignRepo,
-		fileService:  fileService,
-		fileStore:    fileStore,
+		campaignRepo:    campaignRepo,
+		fileService:     fileService,
+		fileStore:       fileStore,
+		documentService: documentService,
 	}
 }
 
@@ -75,7 +77,7 @@ func (s *CampaignService) UploadFile(id interface{}, userID uint, file UploadedF
 	defer src.Close()
 
 	name := fmt.Sprintf("%v.pdf", random.String(16))
-	path := fmt.Sprintf("/campaigns/%v/session-notes/%v", campaign.ID, name)
+	path := fmt.Sprintf("/campaigns/%v/session-notes", campaign.ID)
 
 	err = s.fileStore.Save(path, src, name)
 	if err != nil {
@@ -84,7 +86,7 @@ func (s *CampaignService) UploadFile(id interface{}, userID uint, file UploadedF
 
 	dto := CreateFileDTO{
 		Name:     name,
-		Location: path,
+		Location: fmt.Sprintf("%v/%v", path, name),
 		AuthorID: userID,
 	}
 
@@ -94,12 +96,30 @@ func (s *CampaignService) UploadFile(id interface{}, userID uint, file UploadedF
 		return nil, ErrCampaignFileSave
 	}
 
-	campaign.Files = append(campaign.Files, fileModel)
+	pages, err := s.documentService.Extract(fileModel.Location)
+	if err != nil {
+		return nil, err
+	}
+
+	campaignFileModel := &models.CampaignFile{
+		CampaignID: campaign.ID,
+		FileID:     fileModel.ID,
+		File:       fileModel,
+	}
+
+	campaign.Files = append(campaign.Files, campaignFileModel)
 	err = s.campaignRepo.Update(campaign)
 	if err != nil {
 		_ = s.fileStore.Delete(path)
 		return nil, ErrCampaignUpdate
 	}
+
+	chunks, err := s.documentService.Chunk(campaignFileModel.ID, pages)
+	if err != nil {
+		return nil, err
+	}
+
+	campaignFileModel.Chunks = chunks
 
 	return campaign, nil
 }

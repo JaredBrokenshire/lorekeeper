@@ -90,6 +90,7 @@ func (d *Dependencies) GetCampaignService() CampaignServiceInterface {
 			d.repos.Campaign,
 			d.GetFileService(),
 			d.GetFileStore(),
+			d.GetDocumentService(),
 		)
 	}
 
@@ -114,7 +115,7 @@ func (d *Dependencies) SetFileService(fileService FileServiceInterface) {
 
 func (d *Dependencies) GetDocumentService() DocumentServiceInterface {
 	if d.documentService == nil {
-		d.documentService = NewDocumentService()
+		d.documentService = NewDocumentService(d.repos.DocumentChunk)
 	}
 
 	return d.documentService

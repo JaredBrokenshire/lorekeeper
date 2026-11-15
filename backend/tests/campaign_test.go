@@ -203,12 +203,24 @@ func TestCampaign_Get(t *testing.T) {
 	sessionNote2 := &models.File{AuthorID: author.ID}
 	factories.NewFile(ts.S.DB, sessionNote2)
 
-	dmCampaign := &models.Campaign{DungeonMasterID: ts.AdminUser.ID, Files: []*models.File{sessionNote}}
+	dmCampaign := &models.Campaign{DungeonMasterID: ts.AdminUser.ID}
 	factories.NewCampaign(ts.S.DB, dmCampaign)
-	playerCampaign := &models.Campaign{DungeonMasterID: ts.TestUser.ID, Files: []*models.File{sessionNote2}}
+	playerCampaign := &models.Campaign{DungeonMasterID: ts.TestUser.ID}
 	factories.NewCampaign(ts.S.DB, playerCampaign)
 	notReturnedCampaign := &models.Campaign{DungeonMasterID: 999}
 	factories.NewCampaign(ts.S.DB, notReturnedCampaign)
+
+	dmCampaignFiles := &models.CampaignFile{CampaignID: dmCampaign.ID, FileID: sessionNote.ID}
+	factories.NewCampaignFile(ts.S.DB, dmCampaignFiles)
+	playerCampaignFiles := &models.CampaignFile{CampaignID: playerCampaign.ID, FileID: sessionNote2.ID}
+	factories.NewCampaignFile(ts.S.DB, playerCampaignFiles)
+
+	documentChunk := &models.DocumentChunk{CampaignFileID: dmCampaignFiles.ID}
+	factories.NewDocumentChunk(ts.S.DB, documentChunk)
+	documentChunk2 := &models.DocumentChunk{CampaignFileID: dmCampaignFiles.ID}
+	factories.NewDocumentChunk(ts.S.DB, documentChunk2)
+	documentChunk3 := &models.DocumentChunk{CampaignFileID: dmCampaignFiles.ID}
+	factories.NewDocumentChunk(ts.S.DB, documentChunk3)
 
 	profilePicture := &models.File{}
 	factories.NewFile(ts.S.DB, profilePicture)
@@ -307,6 +319,18 @@ func TestCampaign_Get(t *testing.T) {
 
 					fmt.Sprintf(`"name":"%v"`, sessionNote.Name),
 					fmt.Sprintf(`"location":"%v"`, sessionNote.Location),
+
+					fmt.Sprintf(`"content":"%v"`, documentChunk.Content),
+					fmt.Sprintf(`"page_number":%v`, documentChunk.PageNumber),
+					fmt.Sprintf(`"index":%v`, documentChunk.Index),
+
+					fmt.Sprintf(`"content":"%v"`, documentChunk2.Content),
+					fmt.Sprintf(`"page_number":%v`, documentChunk2.PageNumber),
+					fmt.Sprintf(`"index":%v`, documentChunk2.Index),
+
+					fmt.Sprintf(`"content":"%v"`, documentChunk3.Content),
+					fmt.Sprintf(`"page_number":%v`, documentChunk3.PageNumber),
+					fmt.Sprintf(`"index":%v`, documentChunk3.Index),
 
 					`"characters":null`,
 				},

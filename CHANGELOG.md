@@ -1,3 +1,20 @@
+## V1.0.2 - Text Chunking
+
+### [Added]
+
+- Added document chunking package with new dependency tests
+- Created document chunks table and updated campaign file endpoints to use it
+- Added chunking to campaign session notes seeder
+- Added chunks display to frontend session notes table
+
+### [Fixed]
+
+- Fixed GitHub ci workflow to run all tests
+
+### [Removed]
+
+- Removed testing main file
+
 ## V1.0.1 - PDF Text Extraction
 
 ### [Added]

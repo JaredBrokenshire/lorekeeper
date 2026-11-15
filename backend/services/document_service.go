@@ -3,60 +3,80 @@ package services
 import (
 	"errors"
 	"github.com/ledongthuc/pdf"
+	"lorekeeper/db/models"
+	"lorekeeper/db/repositories"
+	"lorekeeper/pkg/document"
+	"path/filepath"
 	"strings"
 )
 
 type DocumentServiceInterface interface {
-	Extract(path string) ([]Page, error)
+	Extract(path string) ([]document.Page, error)
+	Chunk(campaignFileID uint, pages []document.Page) ([]*models.DocumentChunk, error)
 }
 
 var (
 	ErrDocumentEmptyPath = errors.New("document path is empty")
 	ErrDocumentOpen      = errors.New("error opening document")
-	ErrDocumentPageRead  = errors.New("error reading page")
+	ErrDocumentExtract   = errors.New("error extracting page")
+	ErrDocumentChunk     = errors.New("error chunking document")
+	ErrDocumentSaveChunk = errors.New("error saving document chunk")
+	ErrDocumentPageRead  = errors.New("error reading document page")
 )
 
-type DocumentService struct{}
+type DocumentService struct {
+	extractor document.ExtractorInterface
 
-func NewDocumentService() *DocumentService {
-	return &DocumentService{}
+	chunkRepo *repositories.DocumentChunkRepository
 }
 
-type Page struct {
-	Number int
-	Text   string
+func NewDocumentService(chunkRepo *repositories.DocumentChunkRepository) *DocumentService {
+	return &DocumentService{
+		extractor: document.NewExtractor(),
+		chunkRepo: chunkRepo,
+	}
 }
 
-func (s *DocumentService) Extract(path string) ([]Page, error) {
+func (s *DocumentService) Extract(path string) ([]document.Page, error) {
 	if strings.TrimSpace(path) == "" {
 		return nil, ErrDocumentEmptyPath
 	}
 
-	file, reader, err := pdf.Open(path)
+	file, reader, err := pdf.Open(filepath.Join("../../assets", path))
 	if err != nil {
 		return nil, ErrDocumentOpen
 	}
 	defer file.Close()
 
-	totalPages := reader.NumPage()
-
-	pages := make([]Page, 0, totalPages)
-	// Cache fonts between pages to avoid repeatedly parsing them.
-	fonts := make(map[string]*pdf.Font)
-
-	for pageNumber := 1; pageNumber <= totalPages; pageNumber++ {
-		page := reader.Page(pageNumber)
-
-		text, err := page.GetPlainText(fonts)
-		if err != nil {
-			return nil, ErrDocumentPageRead
-		}
-
-		pages = append(pages, Page{
-			Number: pageNumber,
-			Text:   strings.TrimSpace(text),
-		})
+	pages, err := s.extractor.Extract(reader)
+	if err != nil {
+		return nil, ErrDocumentExtract
 	}
 
 	return pages, nil
+}
+
+func (s *DocumentService) Chunk(campaignFileID uint, pages []document.Page) ([]*models.DocumentChunk, error) {
+	chunks, err := s.extractor.Chunk(pages)
+	if err != nil {
+		return nil, ErrDocumentChunk
+	}
+
+	var res []*models.DocumentChunk
+	for _, chunk := range chunks {
+		c := &models.DocumentChunk{
+			PageNumber:     chunk.PageNumber,
+			Index:          chunk.Index,
+			Content:        chunk.Content,
+			CampaignFileID: campaignFileID,
+		}
+		err := s.chunkRepo.Create(&c)
+		if err != nil {
+			return nil, ErrDocumentSaveChunk
+		}
+
+		res = append(res, c)
+	}
+
+	return res, nil
 }
