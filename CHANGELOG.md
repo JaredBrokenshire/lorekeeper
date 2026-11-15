@@ -6,6 +6,10 @@
 - Created document chunks table and updated campaign file endpoints to use it
 - Added chunking to campaign session notes seeder
 
+### [Removed]
+
+- Removed testing main file
+
 ## V1.0.1 - PDF Text Extraction
 
 ### [Added]
