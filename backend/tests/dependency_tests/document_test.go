@@ -1,8 +1,12 @@
 package dependency_tests
 
 import (
+	"fmt"
+	"github.com/ledongthuc/pdf"
 	"github.com/stretchr/testify/assert"
-	"lorekeeper/services"
+	"lorekeeper/pkg/document"
+	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -17,8 +21,8 @@ type Expected struct {
 	Error     error
 }
 
-func TestDocumentService_Extract(t *testing.T) {
-	documentService := services.NewDocumentService()
+func TestDocument_Extract(t *testing.T) {
+	extractor := document.NewExtractor()
 
 	cases := []struct {
 		Name     string
@@ -26,36 +30,8 @@ func TestDocumentService_Extract(t *testing.T) {
 		Expected Expected
 	}{
 		{
-			Name: "Can't extract PDF with no path",
-			Path: "",
-			Expected: Expected{
-				Error: services.ErrDocumentEmptyPath,
-			},
-		},
-		{
-			Name: "Can't extract PDF that doesn't exist",
-			Path: "test-file-does-not-exist.pdf",
-			Expected: Expected{
-				Error: services.ErrDocumentOpen,
-			},
-		},
-		{
-			Name: "Can't extract empty PDF",
-			Path: "../../assets/test-empty.pdf",
-			Expected: Expected{
-				Error: services.ErrDocumentOpen,
-			},
-		},
-		{
-			Name: "Can't extract corrupted PDF",
-			Path: "../../assets/test-corrupted.pdf",
-			Expected: Expected{
-				Error: services.ErrDocumentOpen,
-			},
-		},
-		{
 			Name: "Can extract single page PDF",
-			Path: "../../assets/test.pdf",
+			Path: "test.pdf",
 			Expected: Expected{
 				Pages: 1,
 				TextParts: []TextPart{
@@ -76,7 +52,7 @@ func TestDocumentService_Extract(t *testing.T) {
 		},
 		{
 			Name: "Can extract multi-page PDF",
-			Path: "../../assets/test-multi-page.pdf",
+			Path: "test-multi-page.pdf",
 			Expected: Expected{
 				Pages: 2,
 				TextParts: []TextPart{
@@ -111,7 +87,9 @@ func TestDocumentService_Extract(t *testing.T) {
 
 	for _, test := range cases {
 		t.Run(test.Name, func(t *testing.T) {
-			pages, err := documentService.Extract(test.Path)
+			_, r, _ := pdf.Open(filepath.Join("../../assets", test.Path))
+
+			pages, err := extractor.Extract(r)
 			assert.Equal(t, test.Expected.Error, err)
 
 			assert.Equal(t, test.Expected.Pages, len(pages))
@@ -121,4 +99,35 @@ func TestDocumentService_Extract(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestDocument_Chunk(t *testing.T) {
+	extractor := document.NewExtractor()
+
+	words := make([]string, 500)
+	for i := range words {
+		words[i] = fmt.Sprintf("word%d", i+1)
+	}
+
+	pages := []document.Page{
+		{
+			Number: 1,
+			Text:   strings.Join(words, " "),
+		},
+	}
+
+	chunks, err := extractor.Chunk(pages)
+	assert.NoError(t, err)
+
+	wordCount := len(words)
+	expectedChunks := (wordCount + (extractor.ChunkSize - extractor.ChunkOverlap) - 1) / (extractor.ChunkSize - extractor.ChunkOverlap)
+
+	assert.Len(t, chunks, expectedChunks)
+	assert.Equal(t, "word1", strings.Fields(chunks[0].Content)[0])
+	assert.Equal(t, fmt.Sprintf("word%v", extractor.ChunkSize), strings.Fields(chunks[0].Content)[extractor.ChunkSize-1])
+	assert.Equal(t, fmt.Sprintf("word%v", extractor.ChunkSize-extractor.ChunkOverlap+1), strings.Fields(chunks[1].Content)[0])
+	assert.Equal(t, fmt.Sprintf("word%v", 2*extractor.ChunkSize-extractor.ChunkOverlap), strings.Fields(chunks[1].Content)[extractor.ChunkSize-1])
+	lastChunk := chunks[len(chunks)-1].Content
+	lastWord := strings.Fields(lastChunk)[len(strings.Fields(lastChunk))-1]
+	assert.Equal(t, "word500", lastWord)
 }
