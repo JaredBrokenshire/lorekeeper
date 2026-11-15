@@ -18,11 +18,6 @@ func TestMain(m *testing.M) {
 	}
 	time.Local = utc
 
-	ts = helpers.NewTestServer("../../../.env")
-
-	// Close the database connection
-	defer ts.S.DB.Close()
-
 	// Run the test
 	code := m.Run()
 
