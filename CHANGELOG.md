@@ -4,6 +4,7 @@
 
 - Added indexes for document chunks table
 - Added BM25 search package
+- Added campaign search endpoint with new service
 
 ## V1.0.2 - Text Chunking
 
