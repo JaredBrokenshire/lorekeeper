@@ -3,6 +3,7 @@
 ### [Added]
 
 - Added indexes for document chunks table
+- Added BM25 search package
 
 ## V1.0.2 - Text Chunking
 
