@@ -1,3 +1,10 @@
+## V1.0.2 - Text Chunking
+
+### [Added]
+
+- Added document chunking package with new dependency tests
+- Created document chunks table and updated campaign file endpoints to use it
+
 ## V1.0.1 - PDF Text Extraction
 
 ### [Added]

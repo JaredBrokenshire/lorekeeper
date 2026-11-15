@@ -8,7 +8,7 @@ import (
 type CampaignResponse struct {
 	*SlimCampaignResponse
 
-	SessionNotes []FileResponse `json:"session_notes"`
+	SessionNotes []CampaignFileResponse `json:"session_notes"`
 }
 
 func NewCampaignResponse(campaign *models.Campaign) *CampaignResponse {
@@ -17,7 +17,7 @@ func NewCampaignResponse(campaign *models.Campaign) *CampaignResponse {
 	}
 
 	if len(campaign.Files) > 0 {
-		res.SessionNotes = NewFileResponses(campaign.Files)
+		res.SessionNotes = NewCampaignFileResponses(campaign.Files)
 	}
 
 	return res
