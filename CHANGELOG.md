@@ -1,3 +1,9 @@
+## V1.0.4 - Local AI Integration
+
+### [Added]
+
+- Added ollama container to docker compose stack with init container to pull the model on startup
+
 ## V1.0.3 - BM25 Search
 
 ### [Added]
