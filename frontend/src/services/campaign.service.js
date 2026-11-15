@@ -20,6 +20,10 @@ const CampaignService = {
         "Content-Type": "multipart/form-data",
       }
     })
+  },
+  search(id, filters) {
+    const queryString = HelperService.buildSearchQueryString(filters)
+    return api.get(`${BASE_URL}/${id}/search${queryString}`)
   }
 }
 

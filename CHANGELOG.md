@@ -1,3 +1,12 @@
+## V1.0.3 - BM25 Search
+
+### [Added]
+
+- Added indexes for document chunks table
+- Added BM25 search package
+- Added campaign search endpoint with new service
+- Added frontend search input for testing api response
+
 ## V1.0.2 - Text Chunking
 
 ### [Added]

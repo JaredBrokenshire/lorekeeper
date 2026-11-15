@@ -22,6 +22,7 @@ type Dependencies struct {
 	campaignService  CampaignServiceInterface
 	fileService      FileServiceInterface
 	documentService  DocumentServiceInterface
+	searchService    SearchServiceInterface
 }
 
 func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
@@ -123,4 +124,16 @@ func (d *Dependencies) GetDocumentService() DocumentServiceInterface {
 
 func (d *Dependencies) SetDocumentService(documentService DocumentServiceInterface) {
 	d.documentService = documentService
+}
+
+func (d *Dependencies) GetSearchService() SearchServiceInterface {
+	if d.searchService == nil {
+		d.searchService = NewSearchService(d.repos.Campaign, d.repos.DocumentChunk)
+	}
+
+	return d.searchService
+}
+
+func (d *Dependencies) SetSearchService(searchService SearchServiceInterface) {
+	d.searchService = searchService
 }

@@ -40,4 +40,5 @@ func RegisterRoutes(s *api.Server) {
 	characterRoutes(s)
 	campaignRoutes(s)
 	campaignFileRoutes(s)
+	campaignSearchRoutes(s)
 }

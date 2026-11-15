@@ -8,7 +8,7 @@
       <input-wrapper
         v-model="filters.search"
         label="Search"
-        name="classes-search"
+        name="campaigns-search"
         placeholder="Search"
         @input="onSearchInput"
       />
