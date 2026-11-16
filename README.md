@@ -174,7 +174,7 @@ http://api.jb-lorekeeper.com:7788
 If you change the API host port using `EXPOSE_PORT`, update `VUE_APP_API_BASE_URL` in `frontend/.env` to match and 
 restart the Vue development server.
 
-### 6. Build the frontend
+### Build the frontend
 
 ```bash
 cd frontend
@@ -183,7 +183,33 @@ npm run build
 
 The production build is written to `frontend/dist/`.
 
-## Technology stack
+## 6. Demonstration
+
+To demonstrate the functionality of the system, 40 campaign session notes have been seeded into the database along with
+the relevant characters and users. 
+
+- Visit the frontend at `http://jb-lorekeeper.com:8080`
+- Login with the admin user credentials:
+  - Username: JBrokenshire
+  - Password: password
+  - NOTE: Admin privileges are not required for the demonstration, this is just the user with the most seeded data.
+- Navigate to the campaigns page.
+- Select the `Marblethorn` Campaign
+
+Here you will be able to see the characters belonging to that campaign as well as the seeded session note files.
+Enter your question into the search bar and press the button to submit.
+
+Useful questions to ask (relevant to the uploaded campaign notes):
+- Where is the Gloam Engine?
+  - Expected Answer: Beneath Brackenford.
+- Who is Jory?
+  - Expected Answer: Mera Venn's nephew, found alive after going missing in the sewers.
+- What is the Ashen Choir?
+  - Expected Answer: Organisation dedicated to unlocking the power of the Gloam Engine.
+- Who did we meet in the ruined shrine dedicated to Saint Orra?
+  - Expected Answer: Ysabet Rusk
+
+## 7. Technology stack
 
 | Area                         | Technology                                             |
 |------------------------------|--------------------------------------------------------|
@@ -317,7 +343,7 @@ The Compose configuration persists MySQL data and Ollama model data in named vol
 in the backend directory rather than a dedicated object-storage service, so ensure that directory is included in any 
 backup strategy.
 
-## Testing
+## 8. Testing
 
 ### Backend tests
 
@@ -389,7 +415,7 @@ The frontend job:
 2. Installs frontend dependencies.
 3. Builds the Vue application using a placeholder API URL.
 
-## Repository layout
+## 9. Repository layout
 
 ```text
 .
@@ -447,7 +473,7 @@ The frontend job:
 └── RESEARCH.md
 ```
 
-## Current limitations and future work
+## 10. Current limitations and future work
 
 The current implementation provides a working end-to-end PDF ingestion and question-answering path, but there are areas 
 that could be developed further:
