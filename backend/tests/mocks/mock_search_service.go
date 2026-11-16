@@ -6,7 +6,6 @@ type SearchCall struct {
 	CampaignID interface{}
 	UserID     uint
 	Query      string
-	Limit      int
 }
 
 type MockSearchService struct {
@@ -20,8 +19,8 @@ func NewMockSearchService() *MockSearchService {
 	return res
 }
 
-func (m *MockSearchService) Search(campaignID interface{}, userID uint, query string, limit int) ([]*services.SearchResult, error) {
-	m.SearchCalls = append(m.SearchCalls, SearchCall{campaignID, userID, query, limit})
+func (m *MockSearchService) Search(campaignID interface{}, userID uint, query string) ([]*services.SearchResult, error) {
+	m.SearchCalls = append(m.SearchCalls, SearchCall{campaignID, userID, query})
 	return nil, m.SearchError
 }
 
