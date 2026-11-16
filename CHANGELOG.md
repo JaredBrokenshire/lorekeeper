@@ -4,6 +4,7 @@
 
 - Added ollama container to docker compose stack with init container to pull the model on startup
 - Added new ollama service for communicating with AI model via http
+- Added conversation with ai model to campaign details page
 
 ### [Changed]
 

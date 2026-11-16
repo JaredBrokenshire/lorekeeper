@@ -39,13 +39,7 @@
 
     <!-- Lorekeeper Tab -->
     <div v-if="activeTab === 'Lorekeeper'">
-      <input-wrapper
-        v-model="filters.search"
-        label="Search"
-        name="campaigns-notes-search"
-        placeholder="Search"
-        @input="onSearchInput"
-      />
+      <lorekeeper-section :campaign-id="campaign.id" />
     </div>
 
     <!-- Characters Tab -->
@@ -129,7 +123,7 @@
         </card>
       </div>
     </div>
-    
+
     <modal
       id="modal-upload-session-notes"
       :visible="showUploadSessionNotesModal"
@@ -145,19 +139,18 @@
 </template>
 
 <script>
-  import debounce from "lodash/debounce";
   import Card from "@/components/Card.vue";
   import Modal from "@/components/Modal.vue";
   import HelperService from "@/services/helper.service";
   import CampaignService from "@/services/campaign.service";
-  import InputWrapper from "@/components/forms/InputWrapper.vue";
   import CharacterCard from "@/components/characters/CharacterCard.vue";
+  import LorekeeperSection from "@/views/campaigns/sections/LorekeeperSection.vue";
   import UploadSessionNotesModal from "@/views/campaigns/sections/UploadSessionNotesModal.vue";
 
   export default {
     name: "CampaignDetails",
     components: {
-      InputWrapper,
+      LorekeeperSection,
       Modal,
       UploadSessionNotesModal,
       Card,
@@ -170,16 +163,10 @@
         activeTab: "Lorekeeper",
         tabs: ["Lorekeeper", "Characters", "Session Notes"],
         showUploadSessionNotesModal: false,
-        filters: {
-          search: "",
-        },
-        debouncedSearch: null,
       }
     },
     mounted() {
-      this.debouncedSearch = debounce(this.searchNotes, 500);
       this.getCampaign()
-
     },
     methods: {
       async getCampaign() {
@@ -203,6 +190,7 @@
         try {
           const res = await CampaignService.uploadSessionNotes(this.campaign.id, file);
           this.campaign = res.data
+          this.activeTab = "Session Notes"
         } catch (error) {
           let errorText = "Could not get upload session notes, please refresh and try again";
 
@@ -210,36 +198,27 @@
             errorText = error.response.data.error;
           }
 
-          HelperService.errorToast(this.$toast, errorText);
+          HelperService.errorToast(this.$toast, error, errorText);
         } finally {
           this.loading = false;
-        }
-      },
-      async searchNotes() {
-        if (this.filters.search === "") return
-        this.loading = true;
-
-        try {
-          const res = await CampaignService.search(this.campaign.id, this.filters);
-        } catch (error) {
-          let errorText = "Could not search session notes, please refresh and try again";
-
-          if (error.response && error.response.data.error) {
-            errorText = error.response.data.error;
-          }
-
-          HelperService.errorToast(this.$toast, errorText);
         }
       },
       closeModals() {
         this.showUploadSessionNotesModal = false;
       },
-      onSearchInput() {
-        this.debouncedSearch()
-      }
     }
   }
 </script>
 
 <style scoped>
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
 </style>
