@@ -13,5 +13,5 @@ func campaignSearchRoutes(s *api.Server) {
 	campaignSearch := s.Echo.Group("/campaigns/:id/search")
 	campaignSearch.Use(mw.JWTAuth(os.Getenv("JWT_SECRET")))
 
-	campaignSearch.GET("", campaignSearchHandler.List)
+	campaignSearch.POST("", campaignSearchHandler.Ask)
 }

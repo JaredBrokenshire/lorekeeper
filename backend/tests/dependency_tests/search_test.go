@@ -14,7 +14,7 @@ func TestRankBM25_RanksRelevantDocuments(t *testing.T) {
 		{ID: 3, Text: "A merchant sold the party a map."},
 	}
 
-	results := search.RankBM25(documents, "drowned creatures tower", 10)
+	results := search.RankBM25(documents, "drowned creatures tower")
 
 	if assert.GreaterOrEqual(t, len(results), 1) {
 		assert.Equal(t, uint(2), results[0].ID)
@@ -22,25 +22,12 @@ func TestRankBM25_RanksRelevantDocuments(t *testing.T) {
 	}
 }
 
-func TestRankBM25_ReturnsOnlyRequestedNumber(t *testing.T) {
-	documents := []search.Document{
-		{ID: 1, Text: "dragon dragon"},
-		{ID: 2, Text: "dragon"},
-		{ID: 3, Text: "dragon in the mountains"},
-	}
-
-	results := search.RankBM25(documents, "dragon", 2)
-
-	assert.Len(t, results, 2)
-	assert.Equal(t, uint(1), results[0].ID)
-}
-
 func TestRankBM25_EmptyQueryOrNoMatchesReturnsEmpty(t *testing.T) {
 	documents := []search.Document{{ID: 1, Text: "A quiet village"}}
 
-	assert.Empty(t, search.RankBM25(documents, "  ", 10))
-	assert.Empty(t, search.RankBM25(documents, "spaceship", 10))
-	assert.Empty(t, search.RankBM25(documents, "village", 0))
+	assert.Empty(t, search.RankBM25(documents, "  "))
+	assert.Empty(t, search.RankBM25(documents, "spaceship"))
+	assert.Empty(t, search.RankBM25(documents, "village"))
 }
 
 func TestRankBM25_TokenizesUnicodeAndPunctuation(t *testing.T) {
@@ -48,7 +35,7 @@ func TestRankBM25_TokenizesUnicodeAndPunctuation(t *testing.T) {
 		{ID: 1, Text: "Brackenford's drowned-creatures!"},
 	}
 
-	results := search.RankBM25(documents, "BRACKENFORD drowned", 5)
+	results := search.RankBM25(documents, "BRACKENFORD drowned")
 
 	if assert.Len(t, results, 1) {
 		assert.Equal(t, uint(1), results[0].ID)

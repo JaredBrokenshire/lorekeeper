@@ -21,9 +21,8 @@ const CampaignService = {
       }
     })
   },
-  search(id, filters) {
-    const queryString = HelperService.buildSearchQueryString(filters)
-    return api.get(`${BASE_URL}/${id}/search${queryString}`)
+  search(id, dto) {
+    return api.post(`${BASE_URL}/${id}/search`, dto)
   }
 }
 

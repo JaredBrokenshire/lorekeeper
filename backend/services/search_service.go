@@ -10,18 +10,9 @@ import (
 	"lorekeeper/pkg/search"
 )
 
-const (
-	DefaultSearchLimit = 10
-	MaxSearchLimit     = 50
-	MaxSearchQuerySize = 200
-)
-
 var (
-	ErrSearchCampaignNotFound = errors.New("campaign not found")
-	ErrSearchEmptyQuery       = errors.New("search query is empty")
-	ErrSearchQueryTooLong     = errors.New("search query is too long")
-	ErrSearchInvalidLimit     = errors.New("search result limit is invalid")
-	ErrSearchRepository       = errors.New("error retrieving campaign document chunks")
+	ErrSearchRepository = errors.New("error retrieving campaign document chunks")
+	ErrSearchNoResults  = errors.New("no results found for search query")
 )
 
 type SearchResult struct {
@@ -30,7 +21,7 @@ type SearchResult struct {
 }
 
 type SearchServiceInterface interface {
-	Search(campaignID interface{}, userID uint, query string, limit int) ([]*SearchResult, error)
+	Search(campaignID interface{}, userID uint, query string) ([]*SearchResult, error)
 }
 
 type SearchService struct {
@@ -45,28 +36,14 @@ func NewSearchService(campaignRepo *repositories.CampaignRepository, chunkRepo *
 	}
 }
 
-func (s *SearchService) Search(campaignID interface{}, userID uint, query string, limit int) ([]*SearchResult, error) {
+func (s *SearchService) Search(campaignID interface{}, userID uint, query string) ([]*SearchResult, error) {
 	query = strings.TrimSpace(query)
-	if query == "" {
-		return nil, ErrSearchEmptyQuery
-	}
-	if len(query) > MaxSearchQuerySize {
-		return nil, ErrSearchQueryTooLong
-	}
-
-	if limit == 0 {
-		limit = DefaultSearchLimit
-	}
-	if limit < 1 || limit > MaxSearchLimit {
-		return nil, ErrSearchInvalidLimit
-	}
-
 	accessible, err := s.campaignRepo.ExistsForUser(campaignID, userID)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrSearchRepository, err)
 	}
 	if !accessible {
-		return nil, ErrSearchCampaignNotFound
+		return nil, ErrCampaignNotFound
 	}
 
 	chunks, err := s.chunkRepo.GetByCampaignID(campaignID)
@@ -74,7 +51,7 @@ func (s *SearchService) Search(campaignID interface{}, userID uint, query string
 		return nil, fmt.Errorf("%w: %v", ErrSearchRepository, err)
 	}
 	if len(chunks) == 0 {
-		return []*SearchResult{}, nil
+		return nil, ErrSearchNoResults
 	}
 
 	documents := make([]search.Document, 0, len(chunks))
@@ -90,7 +67,7 @@ func (s *SearchService) Search(campaignID interface{}, userID uint, query string
 		chunksByID[chunk.ID] = chunk
 	}
 
-	ranked := search.RankBM25(documents, query, limit)
+	ranked := search.RankBM25(documents, query)
 	results := make([]*SearchResult, 0, len(ranked))
 	for _, result := range ranked {
 		if chunk, ok := chunksByID[result.ID]; ok {

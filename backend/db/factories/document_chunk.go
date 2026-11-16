@@ -17,12 +17,12 @@ func NewDocumentChunk(db *gorm.DB, chunk *models.DocumentChunk) {
 
 func fillDocumentChunkDefaults(chunk *models.DocumentChunk) {
 	if chunk.PageNumber == 0 {
-		chunk.PageNumber = rand.Intn(100)
+		chunk.PageNumber = rand.Intn(10000)
 	}
 	if chunk.Content == "" {
 		chunk.Content = random.String(32)
 	}
 	if chunk.Index == 0 {
-		chunk.Index = rand.Intn(100)
+		chunk.Index = rand.Intn(10000)
 	}
 }

@@ -10,7 +10,10 @@ services:
     volumes:
       - ./backend/:/app/
     depends_on:
-      - lorekeeper_mysql
+      lorekeeper_mysql:
+        condition: service_healthy
+      lorekeeper_ollama_init:
+        condition: service_completed_successfully
     env_file:
       - .env
     environment:
@@ -18,6 +21,8 @@ services:
       - WAIT_HOSTS=${DB_HOST}:${DB_PORT}
       - WAIT_BEFORE_HOSTS=5
       - WAIT_SLEEP_INTERVAL=5
+      - OLLAMA_BASE_URL=http://lorekeeper_ollama:${OLLAMA_PORT}
+      - OLLAMA_MODEL=${OLLAMA_MODEL}
     networks:
       - lorekeeper-stack
 
@@ -32,13 +37,61 @@ services:
       - MYSQL_PASSWORD=${DB_PASSWORD}
       - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "mysqladmin ping -h 127.0.0.1 -uroot -p\"$${MYSQL_ROOT_PASSWORD}\" --silent"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
     volumes:
       - database_mysql:/var/lib/mysql
     networks:
       - lorekeeper-stack
 
+  lorekeeper_ollama:
+    image: ollama/ollama
+    container_name: lorekeeper_ollama
+    restart: unless-stopped
+    ports:
+      - ${OLLAMA_EXPOSE_PORT}:${OLLAMA_PORT}
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - lorekeeper-stack
+
+  lorekeeper_ollama_init:
+    image: ollama/ollama
+    container_name: lorekeeper_ollama_init
+    depends_on:
+      - lorekeeper_ollama
+    environment:
+      - OLLAMA_HOST=http://lorekeeper_ollama:${OLLAMA_PORT}
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-qwen2.5:3b}
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        echo "Waiting for Ollama..."
+
+        until ollama list >/dev/null 2>&1; do
+          sleep 2
+        done
+
+        echo "Downloading model: $${OLLAMA_MODEL}"
+
+        ollama pull "$${OLLAMA_MODEL}"
+
+        echo "Model initialisation complete."
+    networks:
+      - lorekeeper-stack
+    restart: "no"
+
 volumes:
   database_mysql:
+  ollama_data:
 
 networks:
   lorekeeper-stack:

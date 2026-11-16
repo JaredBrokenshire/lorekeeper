@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"fmt"
 	"github.com/ledongthuc/pdf"
 	"lorekeeper/db/models"
 	"lorekeeper/db/repositories"
@@ -42,9 +43,9 @@ func (s *DocumentService) Extract(path string) ([]document.Page, error) {
 		return nil, ErrDocumentEmptyPath
 	}
 
-	file, reader, err := pdf.Open(filepath.Join("../../assets", path))
+	file, reader, err := pdf.Open(filepath.Join("assets/files", path))
 	if err != nil {
-		return nil, ErrDocumentOpen
+		return nil, fmt.Errorf("%w: %v", ErrDocumentOpen, err)
 	}
 	defer file.Close()
 
