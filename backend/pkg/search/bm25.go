@@ -90,7 +90,7 @@ func RankBM25(documents []Document, query string) []Result {
 			score += termScore
 		}
 
-		if score > 0.25 {
+		if score > 0.5 {
 			results = append(results, Result{ID: doc.id, Score: score})
 		}
 	}

@@ -11,6 +11,10 @@
 - Updated the campaign search handler to take a natural language question, extract relevant document chunks prompt the
 AI model
 
+### [Fixed]
+
+- Fixed dependency tests not building
+
 ## V1.0.3 - BM25 Search
 
 ### [Added]
