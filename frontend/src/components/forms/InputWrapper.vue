@@ -2,6 +2,7 @@
   <section>
     <label
       v-if="$props.label"
+      :class="$props.labelStyles"
       :for="$props.name"
       class="text-gold-light"
     >
@@ -84,6 +85,10 @@
         default: '',
       },
       label: {
+        type: String,
+        default: '',
+      },
+      labelStyles: {
         type: String,
         default: '',
       },

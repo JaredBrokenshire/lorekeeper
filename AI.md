@@ -1,177 +1,57 @@
-# AI Usage Log – Lorekeeper
+# AI Usage – Lorekeeper
 
-## 1. Introduction
+## AI Tool Used
 
-This document explains how AI tools were used during the development of Lorekeeper.
+| Tool    | Purpose                                                                                       |
+|---------|-----------------------------------------------------------------------------------------------|
+| ChatGPT | Project ideation, architectural discussion, documentation support and generation of test data |
 
-AI tools were used as development assistants to support research, problem-solving, code development and documentation.
+## How AI Was Used
 
-The purpose of this document is to explain:
+- **Project planning:** Used ChatGPT to brainstorm ideas. Refining the prompts towards my interest in Dungeons & Dragons
+helped develop the idea for Lorekeeper. I then researched the proposed technologies independently before settling on the
+architecture.
+- **Documentation:** Used ChatGPT to help create documentation templates and draft or update project documentation, 
+including the README, RESEARCH and AI usage files, and the GitHub pull request template. I reviewed and edited the 
+output to keep it accurate and concise.
+- **Test data:** Used ChatGPT to generate fictional session notes for an eight-session D&D mini-campaign, written from 
+the perspectives of five players with different note-taking styles. The 40 notes included deliberate inconsistencies and
+later corrections to provide realistic material for testing.
 
-- Which AI tools were used.
-- What they were used for.
-- Examples of useful and unhelpful suggestions.
-- How AI-generated suggestions and code were verified.
-- What I learned from using AI during development.
+I did not use AI to write or modify the application code, and I did not rely on it for the project's research and 
+learning.
 
-AI was used as an aid to development, not as a replacement for understanding the application or its underlying
-technologies.
+## Unhelpful Suggestions and Limitations
 
----
+Some suggestions did not fit the project or its actual technical context:
 
-## 2. AI Tools Used
+- **WebLLM and WebGPU:** ChatGPT initially suggested a browser-based approach using these technologies. This was the 
+least useful architectural suggestion; it did not fit the direction I wanted to take the project, so I investigated 
+alternatives independently.
+- **Docker Compose troubleshooting:** At times, ChatGPT misunderstood the context of errors involving the Docker Compose
+configuration and gave suggestions that did not address the underlying issue. I treated these as hypotheses to 
+investigate rather than accepting them as solutions.
 
-List the AI tools used during the challenge and briefly explain their purpose.
+More generally, AI responses can be overly generic, verbose or confident despite misunderstanding the context. They were
+useful as a starting point, but not a substitute for checking the underlying information.
 
-| AI Tool | Purpose                                        |
-|---------|------------------------------------------------|
-| ChatGPT | Research assistance, architectural discussions |
+## Verification
 
----
+I checked AI-assisted work rather than assuming it was correct. Verification included:
 
-## 3. How I Used AI During Development
+- Comparing technical claims with official documentation and independent sources.
+- Manually reviewing documentation and editing it for accuracy and relevance.
+- Reviewing the generated test notes before using them in the project.
+- Running automated tests and manually testing application behaviour in the browser with different inputs and scenarios.
+- Using browser developer tools and terminal output to investigate errors.
 
-### 3.1 Planning and Architecture
+## Reflection
 
-**How I used AI:**
-
-I used ChatGPT to brainstorm possible ideas for the project before any development had begun. Initially these
-suggestions were fairly generic DevOps/AI/Automation projects. I knew I wanted something that was relatively unique to
-my personal interests and so prompted for some Dungeons & Dragons themes, which led to the idea of Lorekeeper.
-Generally, I am firmly against the use of AI within my D&D campaigns, so I was hesitant to implement any of the
-suggestions from ChatGPT. However, my gripes with AI in D&D is that it removes the creative aspect of the game which is
-fundamental to its premise. The idea of a session notes lookup tool does not encroach upon any of those creative
-sections of the game and so it seemed like an appropriate fit.
-
-I took this concept and then began researching some of the proposed architecture that the model had suggested. This
-independent research is what solidified this as the project I would choose as it included technologies and concepts
-potentially relevant to the role that I had not looked at before. ChatGPT recommended a WebLLM and WebGPU approach
-
-**My Evaluation**
-
-As mentioned, the initial project ideas were very generic (e.g, Server/Docker monitoring system, AI automation
-assistant, Home Network troubleshooter). These initially were not particularly helpful, especially given the context
-that this project was for a job interview: a scenario in which I want to stand out from the rest of the applicants.
-
-After I had refined the requirements of the project in my prompts I was able to get some fairly reasonable and workable
-solutions.
-
-### 3.2 Research and Learning
-
-**How I used AI:**
-
-Personally, when it comes to research and learning, I prefer to read directly from the source material rather than
-relying on AI summarisations. Throughout my academic courses, I have found that AI models tend to mischaracterise the
-tone and meaning of more formal pieces of writing like research papers. Something I have extensive experience in is
-limiting conclusions that can be drawn from results. My master's thesis relied heavily on this idea; I could have
-described the results in a very positive manner but this would have been disingenuous without also considering the
-limitations in my research methods and the reliability of them. My experience with AI is that is fails to grasp this
-nuance and tends to describe in absolutes, which from a research perspective can be very detrimental.
-
-**My evaluation:**
-
-I did not use AI for the Research and Learning sections of the project.
-
-### 3.3 Code Development
-
-**How I used AI:**
-
-[Explain whether AI helped generate, improve or explain sections of code.]
-
-**My evaluation:**
-
-[Explain how you reviewed generated code, tested it and ensured you understood how it worked.]
-
-### 3.4 Debugging and Problem Solving
-
-**How I used AI:**
-
-[Explain how AI helped investigate errors or unexpected behaviour.]
-
-**My evaluation:**
-
-[Explain whether the suggestions solved the problems and how you verified the solutions.]
-
-### 3.5 Documentation and Testing
-
-**How I used AI:**
-
-ChatGPT was used to develop templates and content for documentation of the project like updating the README.md
-throughout development to update the changes in the current branch before creating a PR. Templates for RESEARCH.md,
-AI.MD and the GitHub PR template were also created by ChatGPT.
-
-ChatGPT was also used to write some of the test data for the system. I prompted it to write session notes from 5 
-different players in the same D&D game. I also ensured my first prompt included an instruction to ask any clarifying
-questions before it began writing. After I answered the clarifying questions, it produced an 8-session mini campaign
-from the perspective of 5 players, each with unique note-taking styles. In total 40 PDFs were generated. The notes 
-contain mistakes (misspelled name, misremembered details etc.) and corrections throughout to make them appear more 
-realistic. This is something that would have been tricky to do on my own as I would have struggled to mask my own 
-writing style in the final product.
-
-**My evaluation:**
-
-All documentation edits were reviewed manually and edited, if needed, to ensure a consistency and accuracy throughout.
-AI-Generated documentation tends to be filled with unnecessary examples and definitions and is generally very explicit
-in its writing. This is not inherently a bad thing but a lot of this content needed to be removed as it made the writing
-overly verbose.
-
-The test data was all reviewed manually before I commited to using it in the project. No changes were needed and the
-generated notes could be uploaded to the project.
+AI was most useful for accelerating documentation and repetitive tasks, particularly generating varied test data. It was
+less useful when technical problems depended on detailed project context. For architectural and implementation 
+decisions, independent research and direct investigation were more reliable. Using AI as an assistant rather than an 
+authority helped me retain ownership of the decisions and understand the final application.
 
 ---
-
-## 4. Incorrect or Unhelpful AI Suggestions
-
-This section documents instances where AI suggestions were incorrect, unsuitable or didn't work as expected.
-
-| Suggestion            | Why it was unsuitable or incorrect | How I identified the problem | What I did instead     |
-|-----------------------|------------------------------------|------------------------------|------------------------|
-| [Describe suggestion] | [Explain issue]                    | [Explain verification]       | [Describe alternative] |
-
----
-
-## 5. How I Verified AI-Generated Code and Suggestions
-
-I did not assume that AI-generated code or technical explanations were automatically correct.
-
-The following approaches were used to verify suggestions:
-
-- **Official documentation:** Checking technical information against the documentation for relevant libraries and
-  technologies.
-- **Code review:** Reading generated code and ensuring I understood its purpose and behaviour.
-- **Automated testing:** Running unit tests to verify expected functionality.
-- **Manual testing:** Testing application features through the browser using different inputs and scenarios.
-- **Error investigation:** Using browser developer tools and terminal output to investigate problems.
-- **Independent research:** Comparing AI suggestions with alternative sources where appropriate.
-
----
-
-## 6. Limitations and Considerations
-
-[Describe limitations and considerations]
-
----
-
-## 7. Final Reflection
-
-**What was AI most useful for?**
-
-[Describe where AI provided the greatest benefit during development.]
-
-**Where was AI least useful?**
-
-[Describe situations where independent research or experimentation was more effective.]
-
-**What did I learn about working alongside AI?**
-
-[Reflect on how AI affected your development process and understanding of the technologies involved.]
-
-**How did I ensure I understood the final application?**
-
-[Explain how you reviewed, tested and learned the code rather than simply accepting generated solutions.]
-
----
-
-*AI usage log maintained throughout the development of Lorekeeper.*
 
 *Project: Enterprise Automation Services Technical Challenge – November 2026.*

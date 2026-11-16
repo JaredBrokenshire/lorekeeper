@@ -56,7 +56,9 @@ func (r *CampaignRepository) GetByID(id, userID interface{}) *models.Campaign {
 		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
 		Where("campaigns.id = ? AND (dungeon_master_id = ? OR characters.user_id = ?)", id, userID, userID).
 		Preload("Files").
-		Preload("Files.Author").
+		Preload("Files.File").
+		Preload("Files.File.Author").
+		Preload("Files.Chunks").
 		Preload("Characters").
 		Preload("Characters.User").
 		Preload("Characters.Race").
@@ -68,4 +70,16 @@ func (r *CampaignRepository) GetByID(id, userID interface{}) *models.Campaign {
 		First(campaign)
 
 	return campaign
+}
+
+func (r *CampaignRepository) ExistsForUser(id, userID interface{}) (bool, error) {
+	var count int64
+
+	err := r.Db.
+		Model(&models.Campaign{}).
+		Joins("LEFT JOIN characters ON characters.campaign_id = campaigns.id").
+		Where("campaigns.id = ? AND (dungeon_master_id = ? OR characters.user_id = ?)", id, userID, userID).
+		Count(&count).Error
+
+	return count > 0, err
 }

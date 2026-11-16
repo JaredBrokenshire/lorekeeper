@@ -1,3 +1,67 @@
+## V2.0.0 - EAS Technical Challenge Submission
+
+### [Changed]
+
+- Updated all documentation in accordance with challenge requirements
+
+## V1.0.4 - Local AI Integration
+
+### [Added]
+
+- Added ollama container to docker compose stack with init container to pull the model on startup
+- Added new ollama service for communicating with AI model via http
+- Added conversation with ai model to campaign details page
+
+### [Changed]
+
+- Updated the campaign search handler to take a natural language question, extract relevant document chunks prompt the
+AI model
+
+### [Fixed]
+
+- Fixed dependency tests not building
+
+## V1.0.3 - BM25 Search
+
+### [Added]
+
+- Added indexes for document chunks table
+- Added BM25 search package
+- Added campaign search endpoint with new service
+- Added frontend search input for testing api response
+
+## V1.0.2 - Text Chunking
+
+### [Added]
+
+- Added document chunking package with new dependency tests
+- Created document chunks table and updated campaign file endpoints to use it
+- Added chunking to campaign session notes seeder
+- Added chunks display to frontend session notes table
+
+### [Fixed]
+
+- Fixed GitHub ci workflow to run all tests
+
+### [Removed]
+
+- Removed testing main file
+
+## V1.0.1 - PDF Text Extraction
+
+### [Added]
+
+- Added preliminary notes into research.md about pdf text extraction
+- Added document service with method to extract text from PDFs
+
+### [Changed]
+
+- Moved file storage tests to new dependency tests package
+
+### [Fixed]
+
+- Fixed local file storage error handling so it's no longer dependent on operating system
+
 # V1.0.0 - Core Infrastructure
 
 ## V0.0.7 - Campaign Notes Upload

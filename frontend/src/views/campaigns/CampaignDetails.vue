@@ -1,5 +1,5 @@
 <template>
-  <div v-if="campaign && !loading">
+  <div v-if="campaign !== null">
     <h1 class="w-full text-ink border-b-2 border-ember py-4 mb-4">
       {{ campaign.name }}
     </h1>
@@ -39,7 +39,7 @@
 
     <!-- Lorekeeper Tab -->
     <div v-if="activeTab === 'Lorekeeper'">
-      <!-- Lorekeeper content will go here -->
+      <lorekeeper-section :campaign-id="campaign.id" />
     </div>
 
     <!-- Characters Tab -->
@@ -63,20 +63,22 @@
         <tr class="hover:bg-transparent">
           <th class="w-[35%]">Name</th>
           <th class="w-[35%]">Author</th>
-          <th class="w-[15%]">Date</th>
+          <th class="w-[10%]">Date</th>
+          <th class="w-[10%]">Chunks</th>
           <th class="w-[10%]" />
         </tr>
         <tr
-          v-for="(file, index) in campaign.session_notes"
-          :key="`campaign-${campaign.id}-session-note-${index}`"
+          v-for="sessionNote in campaign.session_notes"
+          :key="`campaign-${campaign.id}-session-note-${sessionNote.id}`"
           class="group"
         >
-          <td>{{ file.name }}</td>
-          <td>{{ file.author?.username }}</td>
-          <td>{{ new Date(file.created_at).toLocaleDateString() }}</td>
+          <td>{{ sessionNote.file.name }}</td>
+          <td>{{ sessionNote.file.author?.username }}</td>
+          <td>{{ new Date(sessionNote.file.created_at).toLocaleDateString() }}</td>
+          <td>{{ sessionNote.chunks.length }}</td>
           <td class="cursor-pointer">
             <router-link
-              :to="`/campaigns/${campaign.id}/notes/${file.id}`"
+              :to="`/campaigns/${campaign.id}/notes/${sessionNote.file.id}`"
               class="text-ember text-center transition-all font-normal group-hover:font-bold"
             >
               <h4>View</h4>
@@ -121,7 +123,7 @@
         </card>
       </div>
     </div>
-    
+
     <modal
       id="modal-upload-session-notes"
       :visible="showUploadSessionNotesModal"
@@ -142,11 +144,13 @@
   import HelperService from "@/services/helper.service";
   import CampaignService from "@/services/campaign.service";
   import CharacterCard from "@/components/characters/CharacterCard.vue";
+  import LorekeeperSection from "@/views/campaigns/sections/LorekeeperSection.vue";
   import UploadSessionNotesModal from "@/views/campaigns/sections/UploadSessionNotesModal.vue";
 
   export default {
     name: "CampaignDetails",
     components: {
+      LorekeeperSection,
       Modal,
       UploadSessionNotesModal,
       Card,
@@ -166,8 +170,6 @@
     },
     methods: {
       async getCampaign() {
-        this.loading = true;
-
         try {
           const res = await CampaignService.get(this.$route.params.id);
           this.campaign = res.data;
@@ -179,8 +181,6 @@
           }
 
           HelperService.errorToast(this.$toast, errorText);
-        } finally {
-          this.loading = false;
         }
       },
       async uploadSessionNotes(file) {
@@ -190,6 +190,7 @@
         try {
           const res = await CampaignService.uploadSessionNotes(this.campaign.id, file);
           this.campaign = res.data
+          this.activeTab = "Session Notes"
         } catch (error) {
           let errorText = "Could not get upload session notes, please refresh and try again";
 
@@ -197,17 +198,27 @@
             errorText = error.response.data.error;
           }
 
-          HelperService.errorToast(this.$toast, errorText);
+          HelperService.errorToast(this.$toast, error, errorText);
         } finally {
           this.loading = false;
         }
       },
       closeModals() {
         this.showUploadSessionNotesModal = false;
-      }
+      },
     }
   }
 </script>
 
 <style scoped>
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
 </style>

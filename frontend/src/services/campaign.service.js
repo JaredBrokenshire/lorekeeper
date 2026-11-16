@@ -20,6 +20,9 @@ const CampaignService = {
         "Content-Type": "multipart/form-data",
       }
     })
+  },
+  search(id, dto) {
+    return api.post(`${BASE_URL}/${id}/search`, dto)
   }
 }
 

@@ -1,6 +1,7 @@
 package file_storage
 
 import (
+	"errors"
 	"io"
 	"log"
 	"os"
@@ -12,8 +13,15 @@ type FileContext interface {
 	File(file string) error
 }
 
+var (
+	ErrFileRead   = errors.New("error reading file")
+	ErrFileDelete = errors.New("error deleting file")
+	ErrDirDelete  = errors.New("error deleting directory")
+	ErrFileSave   = errors.New("error saving file")
+)
+
 type LocalStorage struct {
-	storage string
+	Storage string
 }
 
 var folderLocations = []string{"../", "../../"}
@@ -43,55 +51,60 @@ func NewLocalStorage(localStoragePath string) *LocalStorage {
 		}
 	}
 	return &LocalStorage{
-		storage: localStoragePath,
+		Storage: localStoragePath,
 	}
 }
 
 func (s *LocalStorage) Get(c FileContext, path string) error {
-	return c.File(s.storage + path)
+	return c.File(s.Storage + path)
 }
 
 func (s *LocalStorage) ReadFile(path string) ([]byte, error) {
-	fullPath := filepath.Join(s.storage, path)
+	fullPath := filepath.Join(s.Storage, path)
 	res, err := os.ReadFile(fullPath)
 	if err != nil {
-		return nil, err
+		return nil, ErrFileRead
 	}
 	return res, nil
 }
 
 func (s *LocalStorage) Save(path string, file io.Reader, filename string) error {
-
-	uploadPath := filepath.Join(s.storage, path)
+	uploadPath := filepath.Join(s.Storage, path)
 	err := os.MkdirAll(uploadPath, 0755)
 	if err != nil {
-		return err
+		return ErrFileSave
 	}
 
 	// Destination
 	dst, err := os.Create(filepath.Join(uploadPath, filename))
 	if err != nil {
 		log.Printf("Error creating file: %v", err)
-		return err
+		return ErrFileSave
 	}
 	defer dst.Close()
 
 	// Copy
 	if _, err = io.Copy(dst, file); err != nil {
-		return err
+		return ErrFileSave
 	}
 
 	return nil
 }
 
 func (s *LocalStorage) Delete(path string) error {
-	err := os.Remove(filepath.Join(s.storage, path))
-	return err
+	err := os.Remove(filepath.Join(s.Storage, path))
+	if err != nil {
+		return ErrFileDelete
+	}
+	return nil
 }
 
 func (s *LocalStorage) DeleteDir(path string) error {
-	err := os.RemoveAll(filepath.Join(s.storage, path))
-	return err
+	err := os.RemoveAll(filepath.Join(s.Storage, path))
+	if err != nil {
+		return ErrDirDelete
+	}
+	return nil
 }
 
 func (s *LocalStorage) test() error {

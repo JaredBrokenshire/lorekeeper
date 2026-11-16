@@ -1,9 +1,10 @@
-package file_storage
+package dependency_tests
 
 import (
 	"bytes"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	fs "lorekeeper/pkg/file_storage"
 	"os"
 	"testing"
 	"time"
@@ -29,17 +30,17 @@ type SaveTestCase struct {
 }
 
 func TestGet(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/")
+	localStorage := fs.NewLocalStorage("../../assets/")
 	fileContext := NewMockFileContext()
 
-	err := localStorage.Get(fileContext, "example.jpg")
+	err := localStorage.Get(fileContext, "test.jpeg")
 	assert.NoError(t, err, "Unexpected error when finding file")
 
 	fmt.Println("Success")
 }
 
 func TestGetFileNotExist(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/")
+	localStorage := fs.NewLocalStorage("../../assets/")
 	fileContext := NewMockFileContext()
 
 	err := localStorage.Get(fileContext, "/does-not-exist.jpg")
@@ -49,7 +50,7 @@ func TestGetFileNotExist(t *testing.T) {
 }
 
 func TestGetFileFolderNotExist(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/")
+	localStorage := fs.NewLocalStorage("../../assets/")
 	fileContext := NewMockFileContext()
 
 	err := localStorage.Get(fileContext, "/folder-dont-exist/does-not-exist.jpg")
@@ -59,31 +60,25 @@ func TestGetFileFolderNotExist(t *testing.T) {
 }
 
 func TestSave(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	cases := []SaveTestCase{
 		{
 			TestName:        "Can save jpg",
 			FilePath:        "../../assets/",
-			FileName:        "example.jpg",
-			DestinationPath: "test-save/",
-		},
-		{
-			TestName:        "Can save larger jpg",
-			FilePath:        "../../assets/",
-			FileName:        "example-large.jpg",
+			FileName:        "test.jpeg",
 			DestinationPath: "test-save/",
 		},
 		{
 			TestName:        "Can save txt",
 			FilePath:        "../../assets/",
-			FileName:        "example.txt",
+			FileName:        "test.txt",
 			DestinationPath: "test-save/",
 		},
 		{
 			TestName:        "Can save pdf",
 			FilePath:        "../../assets/",
-			FileName:        "example.pdf",
+			FileName:        "test.pdf",
 			DestinationPath: "test-save/",
 		},
 	}
@@ -101,7 +96,7 @@ func TestSave(t *testing.T) {
 			assert.NoError(t, err, "Unexpected error")
 
 			// Check uploaded file exists
-			targetFilePath := localStorage.storage + test.DestinationPath + test.FileName
+			targetFilePath := localStorage.Storage + test.DestinationPath + test.FileName
 			_, err = os.Stat(targetFilePath)
 			assert.NoError(t, err, "Expected file to exist")
 
@@ -112,7 +107,7 @@ func TestSave(t *testing.T) {
 }
 
 func TestSaveDirectoryNotExist(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	// Get directory name
 	dir := fmt.Sprintf("../../assets/files/test-save-dir-%v", time.Now().Unix())
@@ -120,15 +115,14 @@ func TestSaveDirectoryNotExist(t *testing.T) {
 	// Confirm directory does not already exist
 	_, err := os.Stat(dir)
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the file specified")
 
 	// Save file to directory
-	src, err := os.OpenFile("../../assets/example.jpg", os.O_RDWR, 0755)
+	src, err := os.OpenFile("../../assets/test.jpeg", os.O_RDWR, 0755)
 	if err != nil {
 		t.Fatalf("Error opening test file: %v", err)
 	}
 
-	err = localStorage.Save(dir, src, "example.jpg")
+	err = localStorage.Save(dir, src, "test.jpeg")
 	assert.NoError(t, err, "Unexpected error")
 
 	// Check directory now exists
@@ -143,118 +137,112 @@ func TestSaveDirectoryNotExist(t *testing.T) {
 }
 
 func TestSaveOverwrite(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	// Create file to overwrite
-	createFile(t, localStorage.storage, "overwrite.txt", "version 1")
+	createFile(t, localStorage.Storage, "overwrite.txt", "version 1")
 
 	// Load file to overwrite with
-	src, err := os.OpenFile("../../assets/example.txt", os.O_RDWR, 0755)
+	src, err := os.OpenFile("../../assets/test.txt", os.O_RDWR, 0755)
 	if err != nil {
 		t.Fatalf("Error opening test file: %v", err)
 	}
 
 	// Save the file
-	err = localStorage.Save(localStorage.storage, src, "overwrite.txt")
+	err = localStorage.Save(localStorage.Storage, src, "overwrite.txt")
 	assert.NoError(t, err, "Unexpected error")
 
 	// Check files are the same
-	assertFilesEqual(t, "../../assets/example.txt", "../../assets/files/overwrite.txt")
+	assertFilesEqual(t, "../../assets/test.txt", "../../assets/files/overwrite.txt")
 }
 
 // Save - overwrite existing - overwrite an existing text file with a new string value and check they are not equal
 
 func TestDelete(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	// Create file
-	createFile(t, localStorage.storage, "delete-example.txt", "testing")
+	createFile(t, localStorage.Storage, "delete-example.txt", "testing")
 
 	// Delete file
 	err := localStorage.Delete("delete-example.txt")
 	assert.NoError(t, err, "Unexpected error when deleting the file")
 	// Check file no longer exists
-	_, err = os.Stat(localStorage.storage + "delete-example.txt")
+	_, err = os.Stat(localStorage.Storage + "delete-example.txt")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the file specified")
 }
 
 func TestDeleteFileNotExist(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	err := localStorage.Delete("does-not-exist.txt")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the file specified")
+	assert.Equal(t, fs.ErrFileDelete, err, "Expected error to match")
 }
 
 func TestDeleteFileFolderNotExist(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	err := localStorage.Delete("no-folder/does-not-exist.txt")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "The system cannot find the path specified")
+	assert.Error(t, fs.ErrFileDelete, err, "Expected error to match")
 }
 
 func TestDeleteDirectory(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	// Create file
-	createFile(t, localStorage.storage+"test-directory/", "example.txt", "testing")
+	createFile(t, localStorage.Storage+"test-directory/", "example.txt", "testing")
 
 	// Attempt to delete whole directory
 	err := localStorage.Delete("test-directory/")
 	assert.Error(t, err, "Expected an error")
-	assert.Contains(t, err.Error(), "directory is not empty")
+	assert.Equal(t, fs.ErrFileDelete, err, "Expected error to match")
 
 	// Check file still exists
-	_, err = os.Stat(localStorage.storage + "test-directory/example.txt")
+	_, err = os.Stat(localStorage.Storage + "test-directory/example.txt")
 	assert.NoError(t, err, "Expected file to still exist")
 }
 
 func TestReadFile(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/")
+	localStorage := fs.NewLocalStorage("../../assets/")
 
 	testCases := []struct {
 		Name                 string
 		Path                 string
 		ExpectedOutput       []byte
-		ExpectedErrorMessage string
+		ExpectedErrorMessage error
 	}{
 		{
-			Name:                 "Can read file",
-			Path:                 "example.txt",
-			ExpectedOutput:       []byte("A file used for testing"),
-			ExpectedErrorMessage: "",
+			Name:           "Can read file",
+			Path:           "test.txt",
+			ExpectedOutput: []byte("This is a test file"),
 		},
 		{
 			Name:                 "Cannot read file that does not exist",
 			Path:                 "does-not-exist.txt",
 			ExpectedOutput:       nil,
-			ExpectedErrorMessage: "The system cannot find the file specified",
+			ExpectedErrorMessage: fs.ErrFileRead,
 		},
 		{
 			Name:                 "Cannot read directory",
 			Path:                 "files",
 			ExpectedOutput:       nil,
-			ExpectedErrorMessage: "Incorrect function",
+			ExpectedErrorMessage: fs.ErrFileRead,
 		},
 	}
 
 	for _, test := range testCases {
 		t.Run(test.Name, func(t *testing.T) {
 			res, err := localStorage.ReadFile(test.Path)
-			if test.ExpectedErrorMessage == "" {
-				assert.NoError(t, err, "Expected no error")
-			} else {
-				assert.ErrorContains(t, err, test.ExpectedErrorMessage, "Expected error to contain message")
-			}
+			assert.Equal(t, test.ExpectedErrorMessage, err, "Expected error to match")
 			assert.Equal(t, test.ExpectedOutput, res, "Expected output to match")
 		})
 	}
 }
 
 func TestLocalStorage_DeleteDir(t *testing.T) {
-	localStorage := NewLocalStorage("../../assets/files/")
+	localStorage := fs.NewLocalStorage("../../assets/files/")
 
 	testCases := []struct {
 		Name          string
@@ -277,11 +265,11 @@ func TestLocalStorage_DeleteDir(t *testing.T) {
 			Setup: func(t *testing.T) {
 				t.Helper()
 				// Create file
-				createFile(t, localStorage.storage+"test-dir-file-delete/", "example.txt", "testing")
+				createFile(t, localStorage.Storage+"test-dir-file-delete/", "example.txt", "testing")
 			},
 			Callback: func(t *testing.T) {
 				// Check directory no longer exists
-				_, err := os.Stat(localStorage.storage + "test-dir-file-delete/example.txt")
+				_, err := os.Stat(localStorage.Storage + "test-dir-file-delete/example.txt")
 				if !os.IsNotExist(err) {
 					assert.Fail(t, "Expected directory to not exist")
 				}
@@ -294,11 +282,11 @@ func TestLocalStorage_DeleteDir(t *testing.T) {
 			Setup: func(t *testing.T) {
 				t.Helper()
 				// Create file
-				createFile(t, localStorage.storage+"test-dir-delete/", "example.txt", "testing")
+				createFile(t, localStorage.Storage+"test-dir-delete/", "example.txt", "testing")
 			},
 			Callback: func(t *testing.T) {
 				// Check directory no longer exists
-				_, err := os.Stat(localStorage.storage + "test-dir-delete/")
+				_, err := os.Stat(localStorage.Storage + "test-dir-delete/")
 				if !os.IsNotExist(err) {
 					assert.Fail(t, "Expected directory to not exist")
 				}

@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"lorekeeper/db/factories"
 	"lorekeeper/db/models"
+	"lorekeeper/pkg/document"
 	"lorekeeper/services"
 	"lorekeeper/tests/helpers"
 	"lorekeeper/tests/mocks"
@@ -22,13 +23,16 @@ func TestCampaignFile_Create(t *testing.T) {
 
 	mockFileService := mocks.NewMockFileService()
 	mockFileStore := mocks.NewMockFileStore()
+	mockDocumentService := mocks.NewMockDocumentService()
 
 	setup := func(test *helpers.TestCase) {
 		ts.ClearTable("files")
 		mockFileService.Reset()
 		mockFileStore.Reset()
+		mockDocumentService.Reset()
 
 		ts.S.Dependencies.SetFileStore(mockFileStore)
+		ts.S.Dependencies.SetDocumentService(mockDocumentService)
 	}
 
 	dm := &models.User{}
@@ -52,6 +56,10 @@ func TestCampaignFile_Create(t *testing.T) {
 	pdf6, pdfMw6 := createMultipartFile(t, "file", "../assets/test.pdf")
 	pdf7, pdfMw7 := createMultipartFile(t, "file", "../assets/test.pdf")
 	pdf8, pdfMw8 := createMultipartFile(t, "file", "../assets/test.pdf")
+	pdf9, pdfMw9 := createMultipartFile(t, "file", "../assets/test.pdf")
+	pdf10, pdfMw10 := createMultipartFile(t, "file", "../assets/test.pdf")
+	pdf11, pdfMw11 := createMultipartFile(t, "file", "../assets/test.pdf")
+	pdf12, pdfMw12 := createMultipartFile(t, "file", "../assets/test.pdf")
 
 	jpeg, jpegMw := createMultipartFile(t, "file", "../assets/test.jpeg")
 
@@ -119,6 +127,7 @@ func TestCampaignFile_Create(t *testing.T) {
 					ts.S.Repos.Campaign,
 					ts.S.Dependencies.GetFileService(),
 					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
 				))
 			},
 			Request:            getRequest(dmCampaign.ID),
@@ -143,6 +152,7 @@ func TestCampaignFile_Create(t *testing.T) {
 					ts.S.Repos.Campaign,
 					ts.S.Dependencies.GetFileService(),
 					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
 				))
 			},
 			Request:            getRequest(dmCampaign.ID),
@@ -167,6 +177,7 @@ func TestCampaignFile_Create(t *testing.T) {
 					ts.S.Repos.Campaign,
 					ts.S.Dependencies.GetFileService(),
 					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
 				))
 			},
 			Request:            getRequest(dmCampaign.ID),
@@ -189,6 +200,7 @@ func TestCampaignFile_Create(t *testing.T) {
 						ts.S.Repos.Campaign,
 						ts.S.Dependencies.GetFileService(),
 						ts.S.Dependencies.GetFileStore(),
+						ts.S.Dependencies.GetDocumentService(),
 					),
 				)
 			},
@@ -206,14 +218,123 @@ func TestCampaignFile_Create(t *testing.T) {
 			},
 		},
 		{
-			Name: "Can upload valid PDF as a DM",
+			Name: "Can't upload if there is a document open error from document service Extract()",
 			Setup: func(test *helpers.TestCase) {
 				setup(test)
-				ts.S.Dependencies.SetFileStore(mockFileStore)
+
+				mockDocumentService.ExtractError = services.ErrDocumentOpen
+				ts.S.Dependencies.SetDocumentService(mockDocumentService)
 				ts.S.Dependencies.SetCampaignService(services.NewCampaignService(
 					ts.S.Repos.Campaign,
 					ts.S.Dependencies.GetFileService(),
 					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
+				))
+			},
+			Request:            getRequest(dmCampaign.ID),
+			RequestReader:      pdf10,
+			RequestContentType: pdfMw10.FormDataContentType(),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusInternalServerError,
+				BodyPart:   "Error opening file",
+			},
+			Teardown: func() {
+				ts.S.Dependencies.SetDocumentService(nil)
+			},
+		},
+		{
+			Name: "Can't upload if there is a page read error from document service Extract()",
+			Setup: func(test *helpers.TestCase) {
+				setup(test)
+
+				mockDocumentService.ExtractError = services.ErrDocumentPageRead
+				ts.S.Dependencies.SetDocumentService(mockDocumentService)
+				ts.S.Dependencies.SetCampaignService(services.NewCampaignService(
+					ts.S.Repos.Campaign,
+					ts.S.Dependencies.GetFileService(),
+					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
+				))
+			},
+			Request:            getRequest(dmCampaign.ID),
+			RequestReader:      pdf11,
+			RequestContentType: pdfMw11.FormDataContentType(),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusInternalServerError,
+				BodyPart:   "Error reading file page",
+			},
+			Teardown: func() {
+				ts.S.Dependencies.SetDocumentService(nil)
+			},
+		},
+		{
+			Name: "Can't upload if there is a chunk save error from document service Chunk()",
+			Setup: func(test *helpers.TestCase) {
+				setup(test)
+
+				mockDocumentService.ChunkError = services.ErrDocumentSaveChunk
+				ts.S.Dependencies.SetDocumentService(mockDocumentService)
+				ts.S.Dependencies.SetCampaignService(services.NewCampaignService(
+					ts.S.Repos.Campaign,
+					ts.S.Dependencies.GetFileService(),
+					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
+				))
+			},
+			Request:            getRequest(dmCampaign.ID),
+			RequestReader:      pdf12,
+			RequestContentType: pdfMw12.FormDataContentType(),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusInternalServerError,
+				BodyPart:   "Error saving file chunk",
+			},
+			Teardown: func() {
+				ts.S.Dependencies.SetDocumentService(nil)
+			},
+		},
+		{
+			Name: "Can't upload if there is an error from the document service",
+			Setup: func(test *helpers.TestCase) {
+				setup(test)
+
+				mockDocumentService.ExtractError = errors.New("test error")
+				ts.S.Dependencies.SetDocumentService(mockDocumentService)
+				ts.S.Dependencies.SetCampaignService(services.NewCampaignService(
+					ts.S.Repos.Campaign,
+					ts.S.Dependencies.GetFileService(),
+					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
+				))
+			},
+			Request:            getRequest(dmCampaign.ID),
+			RequestReader:      pdf9,
+			RequestContentType: pdfMw9.FormDataContentType(),
+			Expected: helpers.ExpectedResponse{
+				StatusCode: http.StatusInternalServerError,
+				BodyPart:   "There was an error uploading the file",
+			},
+			Teardown: func() {
+				ts.S.Dependencies.SetDocumentService(nil)
+			},
+		},
+		{
+			Name: "Can upload valid PDF as a DM",
+			Setup: func(test *helpers.TestCase) {
+				setup(test)
+
+				mockDocumentService.ExtractResponse = []document.Page{
+					{
+						Number: 1,
+						Text:   "This is a test page",
+					},
+				}
+				ts.S.Dependencies.SetDocumentService(mockDocumentService)
+
+				ts.S.Dependencies.SetCampaignService(services.NewCampaignService(
+					ts.S.Repos.Campaign,
+					ts.S.Dependencies.GetFileService(),
+					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
 				))
 			},
 			Request:            getRequest(dmCampaign.ID),
@@ -224,7 +345,7 @@ func TestCampaignFile_Create(t *testing.T) {
 				BodyParts: []string{
 					fmt.Sprintf(`"name":"%v"`, dmCampaign.Name),
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
-					fmt.Sprintf(`"location":"/campaigns/%v/session-notes/`, dmCampaign.ID),
+					fmt.Sprintf(`"location":"/campaigns/%v/session-notes`, dmCampaign.ID),
 					".pdf",
 				},
 				DatabaseCheck: &helpers.DatabaseCheck{
@@ -234,8 +355,15 @@ func TestCampaignFile_Create(t *testing.T) {
 				},
 				ExpectedCallBack: func(res *httptest.ResponseRecorder) {
 					assert.Equal(t, 1, len(mockFileStore.SaveCalls))
-					assert.Contains(t, mockFileStore.SaveCalls[0].Path, fmt.Sprintf("/campaigns/%v/session-notes/", dmCampaign.ID))
+					assert.Contains(t, mockFileStore.SaveCalls[0].Path, fmt.Sprintf("/campaigns/%v/session-notes", dmCampaign.ID))
 					assert.Contains(t, mockFileStore.SaveCalls[0].FileName, ".pdf")
+
+					assert.Equal(t, 1, len(mockDocumentService.ExtractCalls))
+					assert.Contains(t, mockDocumentService.ExtractCalls[0], fmt.Sprintf("/campaigns/%v/session-notes", dmCampaign.ID))
+					assert.Contains(t, mockDocumentService.ExtractCalls[0], ".pdf")
+
+					assert.Equal(t, 1, len(mockDocumentService.ChunkCalls))
+					assert.Equal(t, mockDocumentService.ChunkCalls[0].Pages, []document.Page{{Number: 1, Text: "This is a test page"}})
 				},
 			},
 		},
@@ -243,11 +371,20 @@ func TestCampaignFile_Create(t *testing.T) {
 			Name: "Can upload valid PDF as a player",
 			Setup: func(test *helpers.TestCase) {
 				setup(test)
-				ts.S.Dependencies.SetFileStore(mockFileStore)
+
+				mockDocumentService.ExtractResponse = []document.Page{
+					{
+						Number: 1,
+						Text:   "This is a test page",
+					},
+				}
+				ts.S.Dependencies.SetDocumentService(mockDocumentService)
+
 				ts.S.Dependencies.SetCampaignService(services.NewCampaignService(
 					ts.S.Repos.Campaign,
 					ts.S.Dependencies.GetFileService(),
 					ts.S.Dependencies.GetFileStore(),
+					ts.S.Dependencies.GetDocumentService(),
 				))
 			},
 			Request:            getRequest(playerCampaign.ID),
@@ -259,7 +396,7 @@ func TestCampaignFile_Create(t *testing.T) {
 					fmt.Sprintf(`"name":"%v"`, playerCampaign.Name),
 					fmt.Sprintf(`"username":"%v"`, dm.Username),
 					fmt.Sprintf(`"username":"%v"`, ts.AdminUser.Username),
-					fmt.Sprintf(`"location":"/campaigns/%v/session-notes/`, playerCampaign.ID),
+					fmt.Sprintf(`"location":"/campaigns/%v/session-notes`, playerCampaign.ID),
 					".pdf",
 				},
 				DatabaseCheck: &helpers.DatabaseCheck{
@@ -269,8 +406,15 @@ func TestCampaignFile_Create(t *testing.T) {
 				},
 				ExpectedCallBack: func(res *httptest.ResponseRecorder) {
 					assert.Equal(t, 1, len(mockFileStore.SaveCalls))
-					assert.Contains(t, mockFileStore.SaveCalls[0].Path, fmt.Sprintf("/campaigns/%v/session-notes/", playerCampaign.ID))
+					assert.Contains(t, mockFileStore.SaveCalls[0].Path, fmt.Sprintf("/campaigns/%v/session-notes", playerCampaign.ID))
 					assert.Contains(t, mockFileStore.SaveCalls[0].FileName, ".pdf")
+
+					assert.Equal(t, 1, len(mockDocumentService.ExtractCalls))
+					assert.Contains(t, mockDocumentService.ExtractCalls[0], fmt.Sprintf("/campaigns/%v/session-notes", playerCampaign.ID))
+					assert.Contains(t, mockDocumentService.ExtractCalls[0], ".pdf")
+
+					assert.Equal(t, 1, len(mockDocumentService.ChunkCalls))
+					assert.Equal(t, mockDocumentService.ChunkCalls[0].Pages, []document.Page{{Number: 1, Text: "This is a test page"}})
 				},
 			},
 		},

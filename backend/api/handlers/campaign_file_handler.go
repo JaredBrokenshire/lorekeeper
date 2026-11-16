@@ -65,6 +65,15 @@ func (h *CampaignFileHandler) Create(c echo.Context) error {
 	case errors.Is(err, services.ErrCampaignFileSave):
 		logging.Logger.LogWarn().Msg(fmt.Sprintf("campaign/file/create error saving file record %v", err.Error()))
 		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error saving file record")
+	case errors.Is(err, services.ErrDocumentPageRead):
+		logging.Logger.LogWarn().Msg(fmt.Sprintf("campaign/file/create error reading file page %v", err.Error()))
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error reading file page")
+	case errors.Is(err, services.ErrDocumentOpen):
+		logging.Logger.LogWarn().Msg(fmt.Sprintf("campaign/file/create error opening file %v", err.Error()))
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error opening file")
+	case errors.Is(err, services.ErrDocumentSaveChunk):
+		logging.Logger.LogWarn().Msg(fmt.Sprintf("campaign/file/create error saving file chunk %v", err.Error()))
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error saving file chunk")
 	case err != nil:
 		logging.Logger.LogError().Msg(fmt.Sprintf("campaign/file/create error: %v", err.Error()))
 		return responses.ErrorResponse(c, http.StatusInternalServerError, "There was an error uploading the file")

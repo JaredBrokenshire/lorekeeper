@@ -28,5 +28,7 @@ func List() []store.Migratable {
 		&list.UpdateCharactersAddProfilePicture{},
 		&list.CreateCampaignFilesTable{},
 		&list.UpdateFilesAddAuthor{},
+		&list.CreateDocumentChunksTable{},
+		&list.UpdateDocumentChunksAddIndexes{},
 	}
 }

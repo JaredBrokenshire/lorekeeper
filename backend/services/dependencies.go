@@ -21,6 +21,10 @@ type Dependencies struct {
 	characterService CharacterServiceInterface
 	campaignService  CampaignServiceInterface
 	fileService      FileServiceInterface
+	documentService  DocumentServiceInterface
+	searchService    SearchServiceInterface
+	ollamaService    OllamaServiceInterface
+	questionService  QuestionServiceInterface
 }
 
 func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
@@ -89,6 +93,7 @@ func (d *Dependencies) GetCampaignService() CampaignServiceInterface {
 			d.repos.Campaign,
 			d.GetFileService(),
 			d.GetFileStore(),
+			d.GetDocumentService(),
 		)
 	}
 
@@ -109,4 +114,58 @@ func (d *Dependencies) GetFileService() FileServiceInterface {
 
 func (d *Dependencies) SetFileService(fileService FileServiceInterface) {
 	d.fileService = fileService
+}
+
+func (d *Dependencies) GetDocumentService() DocumentServiceInterface {
+	if d.documentService == nil {
+		d.documentService = NewDocumentService(d.repos.DocumentChunk)
+	}
+
+	return d.documentService
+}
+
+func (d *Dependencies) SetDocumentService(documentService DocumentServiceInterface) {
+	d.documentService = documentService
+}
+
+func (d *Dependencies) GetSearchService() SearchServiceInterface {
+	if d.searchService == nil {
+		d.searchService = NewSearchService(d.repos.Campaign, d.repos.DocumentChunk)
+	}
+
+	return d.searchService
+}
+
+func (d *Dependencies) SetSearchService(searchService SearchServiceInterface) {
+	d.searchService = searchService
+}
+
+func (d *Dependencies) GetOllamaService() OllamaServiceInterface {
+	if d.ollamaService == nil {
+		d.ollamaService = NewOllamaService(
+			os.Getenv("OLLAMA_BASE_URL"),
+			os.Getenv("OLLAMA_MODEL"),
+		)
+	}
+
+	return d.ollamaService
+}
+
+func (d *Dependencies) SetOllamaService(ollamaService OllamaServiceInterface) {
+	d.ollamaService = ollamaService
+}
+
+func (d *Dependencies) GetQuestionService() QuestionServiceInterface {
+	if d.questionService == nil {
+		d.questionService = NewQuestionService(
+			d.GetSearchService(),
+			d.GetOllamaService(),
+		)
+	}
+
+	return d.questionService
+}
+
+func (d *Dependencies) SetQuestionService(questionService QuestionServiceInterface) {
+	d.questionService = questionService
 }
