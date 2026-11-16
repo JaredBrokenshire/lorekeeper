@@ -7,7 +7,10 @@ import (
 	"strings"
 )
 
-var tokenPattern = regexp.MustCompile(`[\p{L}\p{N}]+`)
+var (
+	MaxSearchLimit = 10
+	tokenPattern   = regexp.MustCompile(`[\p{L}\p{N}]+`)
+)
 
 type Document struct {
 	ID   uint
@@ -19,9 +22,9 @@ type Result struct {
 	Score float64
 }
 
-func RankBM25(documents []Document, query string, limit int) []Result {
+func RankBM25(documents []Document, query string) []Result {
 	queryTerms := uniqueTerms(tokenize(query))
-	if len(documents) == 0 || len(queryTerms) == 0 || limit <= 0 {
+	if len(documents) == 0 || len(queryTerms) == 0 {
 		return []Result{}
 	}
 
@@ -87,7 +90,7 @@ func RankBM25(documents []Document, query string, limit int) []Result {
 			score += termScore
 		}
 
-		if score > 0 {
+		if score > 0.25 {
 			results = append(results, Result{ID: doc.id, Score: score})
 		}
 	}
@@ -96,8 +99,8 @@ func RankBM25(documents []Document, query string, limit int) []Result {
 		return results[i].Score > results[j].Score
 	})
 
-	if len(results) > limit {
-		results = results[:limit]
+	if len(results) > MaxSearchLimit {
+		results = results[:MaxSearchLimit]
 	}
 
 	return results

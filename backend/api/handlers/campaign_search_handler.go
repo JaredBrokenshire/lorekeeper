@@ -3,15 +3,13 @@ package handlers
 import (
 	"errors"
 	"fmt"
-	"net/http"
-	"strconv"
-	"strings"
-
 	"github.com/labstack/echo/v4"
 	"lorekeeper/api"
+	"lorekeeper/api/requests"
 	"lorekeeper/api/responses"
 	"lorekeeper/pkg/logging"
 	"lorekeeper/services"
+	"net/http"
 )
 
 type CampaignSearchHandler struct {
@@ -22,52 +20,70 @@ func NewCampaignSearchHandler(server *api.Server) *CampaignSearchHandler {
 	return &CampaignSearchHandler{server: server}
 }
 
-// List godoc
-// @Summary Search campaign session notes
-// @Description Search the authenticated user's campaign session notes using BM25 relevance ranking.
-// @ID campaigns-search-list
+// Ask godoc
+// @Summary Ask a question about the content of campaign session notes
+// @Description Returns an AI model response to a natural language question with citations to relevant campaign session note chunks, chosen through BM25 ranking
+// @ID campaigns-search-ask
 // @Tags Campaign Actions
 // @Accept json
 // @Produce json
 // @Param id path int true "Campaign ID"
-// @Param search query string true "Search query"
-// @Param limit query int false "Maximum number of results (default 10, maximum 50)"
+// @Param params body requests.CampaignSearchRequest true "Natural language question to rank session notes and prompt the AI model"
 // @Success 200 {object} []responses.SearchResponse
 // @Failure 400 {object} responses.Error
 // @Failure 404 {object} responses.Error
 // @Failure 500 {object} responses.Error
-// @Router /campaigns/:id/search [get]
-func (h *CampaignSearchHandler) List(c echo.Context) error {
+// @Router /campaigns/:id/search [post]
+func (h *CampaignSearchHandler) Ask(c echo.Context) error {
 	userID := c.Get("userID").(uint)
 	campaignID := c.Param("id")
 
-	search := strings.TrimSpace(c.QueryParam("search"))
-	if search == "" {
-		return responses.ErrorResponse(c, http.StatusBadRequest, "A search query is required")
+	request := new(requests.CampaignSearchRequest)
+	if err := c.Bind(request); err != nil {
+		logging.Logger.LogError().Msg("campaigns/:id/search bind error: " + err.Error())
+		return err
+	}
+	if err := c.Validate(request); err != nil {
+		logging.Logger.LogError().Msg("campaigns/:id/search request validation error: " + err.Error())
+		return responses.ErrorResponse(c, http.StatusBadRequest, "Required fields are empty or not valid: "+err.Error())
 	}
 
-	limit := services.DefaultSearchLimit
-	if rawLimit := c.QueryParam("limit"); rawLimit != "" {
-		parsedLimit, parseErr := strconv.Atoi(rawLimit)
-		if parseErr != nil {
-			return responses.ErrorResponse(c, http.StatusBadRequest, "Invalid search result limit")
-		}
-		limit = parsedLimit
-	}
-
-	results, err := h.server.Dependencies.GetSearchService().Search(campaignID, userID, search, limit)
+	questionResponse, err := h.server.Dependencies.GetQuestionService().Ask(campaignID, userID, c.Request().Context(), request.Question)
 	switch {
-	case errors.Is(err, services.ErrSearchCampaignNotFound):
+	case errors.Is(err, services.ErrSearchRepository):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search search repository error" + err.Error())
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "There was an reading from the database")
+	case errors.Is(err, services.ErrCampaignNotFound):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search campaign not found" + err.Error())
 		return responses.ErrorResponse(c, http.StatusNotFound, "Campaign not found")
-	case errors.Is(err, services.ErrSearchQueryTooLong):
-		return responses.ErrorResponse(c, http.StatusBadRequest, "Search query is too long")
-	case errors.Is(err, services.ErrSearchInvalidLimit):
-		return responses.ErrorResponse(c, http.StatusBadRequest, "Invalid search result limit")
+	case errors.Is(err, services.ErrSearchNoResults):
+		logging.Logger.LogInfo().Msg("campaigns/:id/search no search results")
+
+		res := responses.NewQuestionResponse(nil)
+		return responses.Response(c, http.StatusOK, res)
+	case errors.Is(err, services.ErrOllamaPromptEmpty):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search ollama prompt empty" + err.Error())
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Model prompt empty")
+	case errors.Is(err, services.ErrOllamaContextEmpty):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search ollama context empty" + err.Error())
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Model context empty")
+	case errors.Is(err, services.ErrOllamaBuildPrompt):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search ollama build prompt error" + err.Error())
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error building prompt")
+	case errors.Is(err, services.ErrOllamaRequest):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search ollama request error" + err.Error())
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error making request to model")
+	case errors.Is(err, services.ErrOllamaResponse):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search ollama response error" + err.Error())
+		return responses.ErrorResponse(c, http.StatusInternalServerError, "Error parsing response from model")
+	case errors.Is(err, services.ErrOllamaResponseEmpty):
+		logging.Logger.LogWarn().Msg("campaigns/:id/search ollama response empty" + err.Error())
+		return responses.ErrorResponse(c, http.StatusNotFound, "Model response not found")
 	case err != nil:
-		logging.Logger.LogError().Msg(fmt.Sprintf("campaign/search error: %v", err))
+		logging.Logger.LogError().Msg(fmt.Sprintf("campaigns/:id/search error: %v", err))
 		return responses.ErrorResponse(c, http.StatusInternalServerError, "There was an error searching campaign notes")
 	}
 
-	res := responses.NewSearchResponses(results)
+	res := responses.NewQuestionResponse(questionResponse)
 	return responses.Response(c, http.StatusOK, res)
 }

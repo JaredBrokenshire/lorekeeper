@@ -23,6 +23,8 @@ type Dependencies struct {
 	fileService      FileServiceInterface
 	documentService  DocumentServiceInterface
 	searchService    SearchServiceInterface
+	ollamaService    OllamaServiceInterface
+	questionService  QuestionServiceInterface
 }
 
 func NewDependencies(db *gorm.DB, repos *repositories.Repos) *Dependencies {
@@ -136,4 +138,34 @@ func (d *Dependencies) GetSearchService() SearchServiceInterface {
 
 func (d *Dependencies) SetSearchService(searchService SearchServiceInterface) {
 	d.searchService = searchService
+}
+
+func (d *Dependencies) GetOllamaService() OllamaServiceInterface {
+	if d.ollamaService == nil {
+		d.ollamaService = NewOllamaService(
+			os.Getenv("OLLAMA_BASE_URL"),
+			os.Getenv("OLLAMA_MODEL"),
+		)
+	}
+
+	return d.ollamaService
+}
+
+func (d *Dependencies) SetOllamaService(ollamaService OllamaServiceInterface) {
+	d.ollamaService = ollamaService
+}
+
+func (d *Dependencies) GetQuestionService() QuestionServiceInterface {
+	if d.questionService == nil {
+		d.questionService = NewQuestionService(
+			d.GetSearchService(),
+			d.GetOllamaService(),
+		)
+	}
+
+	return d.questionService
+}
+
+func (d *Dependencies) SetQuestionService(questionService QuestionServiceInterface) {
+	d.questionService = questionService
 }

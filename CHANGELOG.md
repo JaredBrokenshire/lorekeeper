@@ -3,6 +3,12 @@
 ### [Added]
 
 - Added ollama container to docker compose stack with init container to pull the model on startup
+- Added new ollama service for communicating with AI model via http
+
+### [Changed]
+
+- Updated the campaign search handler to take a natural language question, extract relevant document chunks prompt the
+AI model
 
 ## V1.0.3 - BM25 Search
 
