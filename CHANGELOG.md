@@ -1,3 +1,9 @@
+## V2.0.0 - EAS Technical Challenge Submission
+
+### [Changed]
+
+- Updated all documentation in accordance with challenge requirements
+
 ## V1.0.4 - Local AI Integration
 
 ### [Added]
